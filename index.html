@@ -474,7 +474,7 @@ function QuizScreen({onFinish, session}) {
   const q = questions[qi];
   const answered = sel !== null;
 
-  const calcPts = tt => tt >= 20 ? 15 : tt >= 10 ? 10 : tt > 0 ? 5 : 0;
+  const calcPts = tt => Math.max(0, tt);
 
   useEffect(() => {
     if (!q) return;
@@ -831,9 +831,80 @@ function RankingScreen({session}) {
 }
 
 /* ══════════════════════════════════════════
+   SCREEN: SETTINGS
+══════════════════════════════════════════ */
+function SettingsScreen({onLogout, go}) {
+  const [sound, setSound] = useState(true);
+  const [notif, setNotif] = useState(true);
+  const [daily, setDaily] = useState(false);
+  const [vibrate, setVibrate] = useState(true);
+
+  const Section = ({title, children}) => (
+    <div style={{padding:'0 20px',marginBottom:18,maxWidth:480,margin:'0 auto 18px'}}>
+      <div style={{color:'rgba(255,255,255,.32)',fontSize:10,fontWeight:800,textTransform:'uppercase',letterSpacing:1.5,marginBottom:8,paddingLeft:4}}>{title}</div>
+      <div style={{background:'rgba(255,255,255,.06)',borderRadius:16,overflow:'hidden',border:'1px solid rgba(255,255,255,.08)'}}>
+        {children}
+      </div>
+    </div>
+  );
+
+  const Row = ({icon, label, right, last, onClick}) => (
+    <div onClick={onClick} style={{display:'flex',alignItems:'center',gap:13,padding:'15px 16px',cursor:onClick?'pointer':'default',borderBottom:last?'none':'1px solid rgba(255,255,255,.05)',transition:'background .15s'}}
+      onMouseEnter={e=>{if(onClick)e.currentTarget.style.background='rgba(255,255,255,.04)'}}
+      onMouseLeave={e=>{if(onClick)e.currentTarget.style.background='transparent'}}>
+      <span style={{fontSize:18,flexShrink:0}}>{icon}</span>
+      <span style={{flex:1,color:'#fff',fontSize:14,fontWeight:500}}>{label}</span>
+      {right}
+    </div>
+  );
+
+  return (
+    <div style={{minHeight:'100%',background:'linear-gradient(180deg,#004060 0%,#003e52 30%,#002233 100%)',paddingBottom:80}}>
+      <div style={{padding:'52px 20px 20px',maxWidth:480,margin:'0 auto'}}>
+        <button onClick={()=>go('profile')} style={{background:'none',border:'none',color:'rgba(255,255,255,.5)',cursor:'pointer',fontFamily:'Poppins',fontSize:13,fontWeight:600,display:'flex',alignItems:'center',gap:6,marginBottom:12,padding:0}}>
+          ← Voltar
+        </button>
+        <h1 style={{fontSize:22,fontWeight:900}}>Configurações</h1>
+      </div>
+
+      <Section title="Notificações">
+        <Row icon="🔔" label="Notificações push" right={<Toggle val={notif} set={setNotif}/>}/>
+        <Row icon="⏰" label="Lembrete diário" right={<Toggle val={daily} set={setDaily}/>} last/>
+      </Section>
+
+      <Section title="Preferências">
+        <Row icon="🔊" label="Sons do jogo" right={<Toggle val={sound} set={setSound}/>}/>
+        <Row icon="📳" label="Vibração" right={<Toggle val={vibrate} set={setVibrate}/>} last/>
+      </Section>
+
+      <Section title="Conta">
+        <Row icon="🔒" label="Alterar senha" right={<span style={{color:'rgba(255,255,255,.28)',fontSize:13}}>→</span>} onClick={async()=>{
+          const email = prompt('Informe seu email para receber o link:');
+          if(email){ await sb.auth.resetPasswordForEmail(email); alert('Email de redefinição enviado!'); }
+        }}/>
+        <Row icon="📄" label="Termos de uso" right={<span style={{color:'rgba(255,255,255,.28)',fontSize:13}}>→</span>} last onClick={()=>{}}/>
+      </Section>
+
+      <Section title="Sobre">
+        <Row icon="ℹ️" label="Versão do app" right={<span style={{color:'rgba(255,255,255,.28)',fontSize:12,fontWeight:600}}>1.0.0</span>}/>
+        <Row icon="⚡" label="Momento QUIZ" right={<span style={{color:'#8dc63f',fontSize:11,fontWeight:700}}>MVP</span>} last/>
+      </Section>
+
+      <div style={{padding:'0 20px',maxWidth:480,margin:'0 auto'}}>
+        <button onClick={onLogout} style={{width:'100%',padding:'16px',background:'rgba(241,95,41,.12)',border:'1.5px solid rgba(241,95,41,.32)',borderRadius:16,color:'#f15f29',fontFamily:'Poppins',fontWeight:800,fontSize:14,cursor:'pointer',transition:'all .2s'}}
+          onMouseEnter={e=>e.currentTarget.style.background='rgba(241,95,41,.22)'}
+          onMouseLeave={e=>e.currentTarget.style.background='rgba(241,95,41,.12)'}>
+          🚪 Sair da Conta
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════
    SCREEN: PROFILE
 ══════════════════════════════════════════ */
-function ProfileScreen({session, profile, onLogout}) {
+function ProfileScreen({session, profile, onLogout, go}) {
   const name = profile?.username || session?.user?.user_metadata?.username || 'Jogador';
   const email = session?.user?.email || '';
   const xpCur = profile?.total_score || 0;
@@ -881,6 +952,9 @@ function ProfileScreen({session, profile, onLogout}) {
           ))}
         </div>
 
+        <button onClick={()=>go('settings')} className="btn-ghost" style={{marginBottom:10}}>
+          ⚙️ Configurações
+        </button>
         <button onClick={onLogout} style={{width:'100%',padding:'16px',background:'rgba(241,95,41,.12)',border:'1.5px solid rgba(241,95,41,.32)',borderRadius:16,color:'#f15f29',fontFamily:'Poppins',fontWeight:800,fontSize:14,cursor:'pointer',transition:'all .2s'}}
           onMouseEnter={e=>e.currentTarget.style.background='rgba(241,95,41,.22)'}
           onMouseLeave={e=>e.currentTarget.style.background='rgba(241,95,41,.12)'}>
@@ -982,7 +1056,8 @@ function App() {
         {screen==='result' && <div className="page"><ResultScreen scores={quizScores} questions={quizQuestions} onAgain={()=>go('quiz')} onHome={()=>go('dashboard')}/></div>}
         {screen==='history' && <div className="page"><HistoryScreen session={session}/></div>}
         {screen==='ranking' && <div className="page"><RankingScreen session={session}/></div>}
-        {screen==='profile' && <div className="page"><ProfileScreen session={session} profile={profile} onLogout={handleLogout}/></div>}
+        {screen==='profile' && <div className="page"><ProfileScreen session={session} profile={profile} onLogout={handleLogout} go={go}/></div>}
+        {screen==='settings' && <div className="page"><SettingsScreen onLogout={handleLogout} go={go}/></div>}
       </div>
 
       {navScreens.includes(screen) && <BNav cur={screen} go={go}/>}
