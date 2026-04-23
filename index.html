@@ -267,6 +267,8 @@ function LoginScreen({onLogin}) {
   const [name,setName] = useState('');
   const [email,setEmail] = useState('');
   const [pass,setPass] = useState('');
+  const [gender,setGender] = useState('');
+  const [birthdate,setBirthdate] = useState('');
   const [loading,setLoading] = useState(false);
   const [err,setErr] = useState('');
 
@@ -275,9 +277,11 @@ function LoginScreen({onLogin}) {
     try {
       if (mode === 'register') {
         if (!name.trim()) { setErr('Informe seu nome'); setLoading(false); return; }
+        if (!gender) { setErr('Selecione seu gênero'); setLoading(false); return; }
+        if (!birthdate) { setErr('Informe sua data de nascimento'); setLoading(false); return; }
         const {data,error} = await sb.auth.signUp({
           email, password: pass,
-          options: { data: { username: name.trim() } }
+          options: { data: { username: name.trim(), gender, birthdate } }
         });
         if (error) throw error;
         if (data.user) onLogin(data.user);
@@ -321,9 +325,33 @@ function LoginScreen({onLogin}) {
         {/* Fields */}
         <div style={{display:'flex',flexDirection:'column',gap:12}}>
           {mode==='register' && (
-            <div style={{animation:'mqFadeUp .25s ease'}}>
-              <label style={{color:'rgba(255,255,255,.45)',fontSize:11,fontWeight:700,textTransform:'uppercase',letterSpacing:.8,display:'block',marginBottom:6}}>Nome</label>
-              <input className="inp" placeholder="Seu nome" value={name} onChange={e=>setName(e.target.value)} onKeyDown={onKey}/>
+            <div style={{display:'flex',flexDirection:'column',gap:12,animation:'mqFadeUp .25s ease'}}>
+              <div>
+                <label style={{color:'rgba(255,255,255,.45)',fontSize:11,fontWeight:700,textTransform:'uppercase',letterSpacing:.8,display:'block',marginBottom:6}}>Nome</label>
+                <input className="inp" placeholder="Seu nome" value={name} onChange={e=>setName(e.target.value)} onKeyDown={onKey}/>
+              </div>
+              <div>
+                <label style={{color:'rgba(255,255,255,.45)',fontSize:11,fontWeight:700,textTransform:'uppercase',letterSpacing:.8,display:'block',marginBottom:6}}>Gênero</label>
+                <div style={{display:'flex',gap:8}}>
+                  {[{v:'masculino',l:'Masculino',e:'👨'},{v:'feminino',l:'Feminino',e:'👩'},{v:'nao-binario',l:'Não-binário',e:'🧑'}].map(g=>(
+                    <button key={g.v} type="button" onClick={()=>setGender(g.v)} style={{
+                      flex:1,padding:'10px 6px',border:`2px solid ${gender===g.v?'#8dc63f':'rgba(255,255,255,.12)'}`,
+                      borderRadius:12,background:gender===g.v?'rgba(141,198,63,.15)':'rgba(255,255,255,.06)',
+                      color:gender===g.v?'#8dc63f':'rgba(255,255,255,.6)',
+                      fontFamily:'Poppins',fontSize:11,fontWeight:700,cursor:'pointer',
+                      transition:'all .2s',display:'flex',flexDirection:'column',alignItems:'center',gap:4,
+                    }}>
+                      <span style={{fontSize:18}}>{g.e}</span>{g.l}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <label style={{color:'rgba(255,255,255,.45)',fontSize:11,fontWeight:700,textTransform:'uppercase',letterSpacing:.8,display:'block',marginBottom:6}}>Data de Nascimento</label>
+                <input className="inp" type="date" value={birthdate} onChange={e=>setBirthdate(e.target.value)}
+                  max={new Date().toISOString().split('T')[0]}
+                  style={{colorScheme:'dark'}}/>
+              </div>
             </div>
           )}
           <div>
