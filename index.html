@@ -13,191 +13,105 @@
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
 body{font-family:'Poppins',sans-serif;background:#060e12;color:#fff;min-height:100vh}
+:root{--primary:#003e52;--green:#8dc63f;--yellow:#F5FF0F;--cyan:#0090C1;--orange:#f15f29;--max-w:480px}
 
-:root{
-  --primary:#003e52;
-  --green:#8dc63f;
-  --yellow:#F5FF0F;
-  --cyan:#0090C1;
-  --orange:#f15f29;
-  --dark:#231f20;
-  --card-bg:rgba(255,255,255,.07);
-  --card-border:rgba(255,255,255,.10);
-  --max-w:480px;
-}
-
-/* Layout */
 .app-shell{min-height:100vh;display:flex;flex-direction:column}
 .app-main{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .app-main::-webkit-scrollbar{display:none}
 .page{max-width:var(--max-w);margin:0 auto;min-height:100%}
 
-/* Animations */
 @keyframes mqPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
 @keyframes mqBounce{0%,100%{transform:translateY(0)}40%{transform:translateY(-14px)}60%{transform:translateY(-7px)}}
 @keyframes mqShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
 @keyframes mqFadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
-@keyframes mqGlow{0%,100%{text-shadow:0 0 12px #F5FF0F66}50%{text-shadow:0 0 28px #F5FF0Faa,0 0 56px #F5FF0F33}}
+@keyframes mqGlow{0%,100%{text-shadow:0 0 12px #F5FF0F66}50%{text-shadow:0 0 28px #F5FF0Faa}}
 @keyframes mqScorePop{0%{opacity:0;transform:translateY(0) scale(.5)}40%{opacity:1;transform:translateY(-28px) scale(1.3)}100%{opacity:0;transform:translateY(-56px) scale(1)}}
 @keyframes mqSlideUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
 @keyframes mqSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 @keyframes mqFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes mqCountdown{from{stroke-dashoffset:0}to{stroke-dashoffset:251}}
 
-/* Components */
-.btn-cta{
-  background:linear-gradient(135deg,#8dc63f 0%,#5fa020 50%,#0090C1 100%);
-  background-size:200% 200%;
-  color:#fff;border:none;border-radius:16px;
-  padding:16px 24px;
-  font-family:'Poppins',sans-serif;font-weight:800;font-size:15px;
-  cursor:pointer;transition:transform .15s,box-shadow .15s,background-position .3s;
-  box-shadow:0 6px 24px rgba(141,198,63,.35);
-  width:100%;display:flex;align-items:center;justify-content:center;gap:10px;
-}
+.btn-cta{background:linear-gradient(135deg,#8dc63f 0%,#5fa020 50%,#0090C1 100%);background-size:200% 200%;color:#fff;border:none;border-radius:16px;padding:16px 24px;font-family:'Poppins',sans-serif;font-weight:800;font-size:15px;cursor:pointer;transition:transform .15s,box-shadow .15s,background-position .3s;box-shadow:0 6px 24px rgba(141,198,63,.35);width:100%;display:flex;align-items:center;justify-content:center;gap:10px}
 .btn-cta:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(141,198,63,.45);background-position:right center}
 .btn-cta:active{transform:scale(.97)}
 .btn-cta:disabled{opacity:.6;cursor:not-allowed;transform:none}
-
-.btn-ghost{
-  background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.16);
-  border-radius:14px;padding:14px 24px;
-  font-family:'Poppins',sans-serif;font-weight:700;font-size:14px;color:#fff;
-  cursor:pointer;transition:all .2s;width:100%;display:flex;align-items:center;justify-content:center;gap:8px;
-}
-.btn-ghost:hover{background:rgba(255,255,255,.13);border-color:rgba(255,255,255,.28)}
-
-.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:16px;padding:16px}
-
-.inp{
-  width:100%;background:rgba(255,255,255,.07);
-  border:1.5px solid rgba(255,255,255,.12);
-  border-radius:13px;padding:14px 16px;
-  color:#fff;font-family:'Poppins',sans-serif;font-size:14px;
-  outline:none;transition:border-color .2s,background .2s;
-}
+.btn-ghost{background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.16);border-radius:14px;padding:14px 24px;font-family:'Poppins',sans-serif;font-weight:700;font-size:14px;color:#fff;cursor:pointer;transition:all .2s;width:100%;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-ghost:hover{background:rgba(255,255,255,.13)}
+.card{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.10);border-radius:16px;padding:16px}
+.inp{width:100%;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.12);border-radius:13px;padding:14px 16px;color:#fff;font-family:'Poppins',sans-serif;font-size:14px;outline:none;transition:border-color .2s}
 .inp:focus{border-color:#8dc63f;background:rgba(141,198,63,.06)}
 .inp::placeholder{color:rgba(255,255,255,.32)}
-
-.opt{
-  width:100%;background:rgba(255,255,255,.07);
-  border:2px solid rgba(255,255,255,.11);
-  border-radius:16px;padding:14px 15px;
-  color:#fff;font-family:'Poppins',sans-serif;font-size:14px;font-weight:500;
-  cursor:pointer;text-align:left;
-  transition:border-color .2s,background .2s,transform .13s;
-  display:flex;align-items:center;gap:12px;margin-bottom:9px;
-}
+.opt{width:100%;background:rgba(255,255,255,.07);border:2px solid rgba(255,255,255,.11);border-radius:16px;padding:14px 15px;color:#fff;font-family:'Poppins',sans-serif;font-size:14px;font-weight:500;cursor:pointer;text-align:left;transition:border-color .2s,background .2s,transform .13s;display:flex;align-items:center;gap:12px;margin-bottom:9px}
 .opt:hover:not(:disabled){border-color:rgba(255,255,255,.3);transform:translateX(3px)}
 .opt:disabled{cursor:default}
 .opt.correct{background:rgba(141,198,63,.2);border-color:#8dc63f;animation:mqPulse .5s}
 .opt.wrong{background:rgba(241,95,41,.2);border-color:#f15f29;animation:mqShake .45s}
 .opt.dim{opacity:.32}
-
 .pill{display:inline-flex;align-items:center;gap:4px;background:rgba(245,255,15,.1);color:#F5FF0F;border:1px solid rgba(245,255,15,.25);border-radius:20px;padding:2px 10px;font-size:11px;font-weight:700}
-
 .progress-bar{height:5px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden}
 .progress-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,#8dc63f,#0090C1);transition:width .5s ease}
-
 .toggle-track{width:46px;height:26px;border-radius:13px;cursor:pointer;position:relative;transition:background .25s;flex-shrink:0}
 .toggle-thumb{width:20px;height:20px;border-radius:50%;background:#fff;position:absolute;top:3px;transition:left .25s;box-shadow:0 2px 6px rgba(0,0,0,.3)}
-
-.bnav{
-  background:rgba(10,14,18,.95);backdrop-filter:blur(16px);
-  border-top:1px solid rgba(255,255,255,.07);
-  display:flex;align-items:center;justify-content:space-around;
-  padding:6px 0 max(8px,env(safe-area-inset-bottom));
-  position:sticky;bottom:0;z-index:100;
-  max-width:100%;
-}
+.bnav{background:rgba(10,14,18,.95);backdrop-filter:blur(16px);border-top:1px solid rgba(255,255,255,.07);display:flex;align-items:center;justify-content:space-around;padding:6px 0 max(8px,env(safe-area-inset-bottom));position:sticky;bottom:0;z-index:100}
 .bnav-inner{width:100%;max-width:var(--max-w);margin:0 auto;display:flex;align-items:center;justify-content:space-around}
 .bnav-btn{background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 16px;transition:transform .15s}
 .bnav-btn:active{transform:scale(.88)}
-
 .spinner{width:22px;height:22px;border-radius:50%;border:3px solid rgba(255,255,255,.2);border-top-color:#fff;animation:mqSpin .7s linear infinite}
-
-.section-header{padding:52px 20px 16px}
-.section-header h1{font-size:22px;font-weight:900}
-.section-header p{color:rgba(255,255,255,.42);font-size:13px;margin-top:3px}
-
-/* Responsive */
-@media(min-width:600px){
-  :root{--max-w:520px}
-  .section-header{padding:56px 24px 18px}
-  .page-pad{padding:0 24px}
-}
 </style>
 </head>
 <body>
 <div id="root"></div>
 <script type="text/babel">
-const {useState, useEffect, useRef, useCallback} = React;
+const {useState,useEffect,useRef,useCallback} = React;
 
-/* ── SUPABASE ── */
-const SUPA_URL = 'https://iiljupzogoywbjqjsbft.supabase.co';
-const SUPA_KEY = 'sb_publishable_ylEPdfp7VbyyM2RqJdyGLQ_mwgVPdzR';
-const sb = supabase.createClient(SUPA_URL, SUPA_KEY);
+const SUPA_URL='https://iiljupzogoywbjqjsbft.supabase.co';
+const SUPA_KEY='sb_publishable_ylEPdfp7VbyyM2RqJdyGLQ_mwgVPdzR';
+const sb=supabase.createClient(SUPA_URL,SUPA_KEY);
 
-/* ── ICONS ── */
-const IcHome = ({s=20,c='currentColor'}) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>;
-const IcClock = ({s=20,c='currentColor'}) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>;
-const IcTrophy = ({s=20,c='currentColor'}) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M7 4h10v7a5 5 0 01-10 0V4z"/><path d="M4 4h3v5a3 3 0 01-3-3V4z"/><path d="M17 4h3v2a3 3 0 01-3 3V4z"/><line x1="12" y1="17" x2="12" y2="21"/><line x1="8" y1="21" x2="16" y2="21"/></svg>;
-const IcUser = ({s=20,c='currentColor'}) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>;
-const IcPlay = ({s=20,c='currentColor'}) => <svg width={s} height={s} viewBox="0 0 24 24" fill={c}><polygon points="5,3 19,12 5,21"/></svg>;
-const IcCheck = ({s=16,c='currentColor'}) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20,6 9,17 4,12"/></svg>;
-const IcX = ({s=16,c='currentColor'}) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="3" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>;
-const IcArrow = ({s=18,c='currentColor'}) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></svg>;
-const IcRefresh = ({s=18,c='currentColor'}) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="23,4 23,10 17,10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>;
-const IcZap = ({s=28,c='#fff'}) => <svg width={s} height={s} viewBox="0 0 24 24" fill={c}><polygon points="13,2 3,14 12,14 11,22 21,10 12,10"/></svg>;
+/* ── helpers ── */
+function todayBrasilia(){
+  return new Date().toLocaleDateString('en-CA',{timeZone:'America/Sao_Paulo'});
+}
 
-/* ── CONFETTI ── */
-function Confetti({active}) {
-  const ref = useRef(null);
-  const raf = useRef(null);
-  useEffect(() => {
-    if (!active || !ref.current) return;
-    const c = ref.current;
-    const ctx = c.getContext('2d');
-    c.width = c.offsetWidth; c.height = c.offsetHeight;
-    const cols = ['#8dc63f','#F5FF0F','#0090C1','#f15f29','#fff','#FFD700'];
-    const ps = Array.from({length:80},()=>({
-      x:Math.random()*c.width, y:-20-Math.random()*180,
-      w:4+Math.random()*6, h:6+Math.random()*10,
-      col:cols[Math.floor(Math.random()*cols.length)],
-      spd:2+Math.random()*3, ang:Math.random()*Math.PI*2,
-      spin:(Math.random()-.5)*.2, drift:(Math.random()-.5)*1.4,
-    }));
-    const loop=()=>{
-      ctx.clearRect(0,0,c.width,c.height);
-      ps.forEach(p=>{
-        p.y+=p.spd; p.x+=p.drift; p.ang+=p.spin;
-        if(p.y>c.height+20){p.y=-20;p.x=Math.random()*c.width}
-        ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.ang);
-        ctx.fillStyle=p.col;ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);
-        ctx.restore();
-      });
-      raf.current=requestAnimationFrame(loop);
-    };
-    loop();
-    return()=>cancelAnimationFrame(raf.current);
+/* ── icons ── */
+const IcHome=({s=20,c='currentColor'})=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>;
+const IcClock=({s=20,c='currentColor'})=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>;
+const IcTrophy=({s=20,c='currentColor'})=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M7 4h10v7a5 5 0 01-10 0V4z"/><path d="M4 4h3v5a3 3 0 01-3-3V4z"/><path d="M17 4h3v2a3 3 0 01-3 3V4z"/><line x1="12" y1="17" x2="12" y2="21"/><line x1="8" y1="21" x2="16" y2="21"/></svg>;
+const IcUser=({s=20,c='currentColor'})=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>;
+const IcCheck=({s=16,c='currentColor'})=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20,6 9,17 4,12"/></svg>;
+const IcX=({s=16,c='currentColor'})=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="3" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>;
+const IcArrow=({s=18,c='currentColor'})=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></svg>;
+const IcZap=({s=28,c='#fff'})=><svg width={s} height={s} viewBox="0 0 24 24" fill={c}><polygon points="13,2 3,14 12,14 11,22 21,10 12,10"/></svg>;
+const IcShield=({s=20,c='currentColor'})=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>;
+const IcStar=({s=20,c='currentColor'})=><svg width={s} height={s} viewBox="0 0 24 24" fill={c}><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>;
+const IcPlay=({s=20,c='currentColor'})=><svg width={s} height={s} viewBox="0 0 24 24" fill={c}><polygon points="5,3 19,12 5,21"/></svg>;
+const IcRefresh=({s=18,c='currentColor'})=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="23,4 23,10 17,10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>;
+
+/* ── Confetti ── */
+function Confetti({active}){
+  const ref=useRef(null),raf=useRef(null);
+  useEffect(()=>{
+    if(!active||!ref.current)return;
+    const c=ref.current,ctx=c.getContext('2d');
+    c.width=c.offsetWidth;c.height=c.offsetHeight;
+    const cols=['#8dc63f','#F5FF0F','#0090C1','#f15f29','#fff','#FFD700'];
+    const ps=Array.from({length:80},()=>({x:Math.random()*c.width,y:-20-Math.random()*180,w:4+Math.random()*6,h:6+Math.random()*10,col:cols[Math.floor(Math.random()*cols.length)],spd:2+Math.random()*3,ang:Math.random()*Math.PI*2,spin:(Math.random()-.5)*.2,drift:(Math.random()-.5)*1.4}));
+    const loop=()=>{ctx.clearRect(0,0,c.width,c.height);ps.forEach(p=>{p.y+=p.spd;p.x+=p.drift;p.ang+=p.spin;if(p.y>c.height+20){p.y=-20;p.x=Math.random()*c.width}ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.ang);ctx.fillStyle=p.col;ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);ctx.restore()});raf.current=requestAnimationFrame(loop)};
+    loop();return()=>cancelAnimationFrame(raf.current);
   },[active]);
   if(!active)return null;
   return <canvas ref={ref} style={{position:'fixed',inset:0,width:'100%',height:'100%',pointerEvents:'none',zIndex:9999}}/>;
 }
 
-/* ── CIRCULAR TIMER ── */
-function CircTimer({t, total=30}) {
-  const R=38, C=2*Math.PI*R;
-  const pct=t/total;
-  const col=t>20?'#8dc63f':t>10?'#F5FF0F':'#f15f29';
-  return (
+/* ── CircTimer ── */
+function CircTimer({t,total=30}){
+  const R=38,C=2*Math.PI*R,col=t>20?'#8dc63f':t>10?'#F5FF0F':'#f15f29';
+  return(
     <div style={{position:'relative',width:90,height:90}}>
       <svg width="90" height="90" style={{transform:'rotate(-90deg)'}}>
         <circle cx="45" cy="45" r={R} fill="none" stroke="rgba(255,255,255,.1)" strokeWidth="6"/>
-        <circle cx="45" cy="45" r={R} fill="none" stroke={col} strokeWidth="6"
-          strokeLinecap="round"
-          strokeDasharray={C}
-          strokeDashoffset={C*(1-pct)}
-          style={{transition:'stroke-dashoffset 1s linear,stroke .5s'}}/>
+        <circle cx="45" cy="45" r={R} fill="none" stroke={col} strokeWidth="6" strokeLinecap="round"
+          strokeDasharray={C} strokeDashoffset={C*(1-t/total)} style={{transition:'stroke-dashoffset 1s linear,stroke .5s'}}/>
       </svg>
       <div style={{position:'absolute',inset:0,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center'}}>
         <span style={{color:col,fontSize:22,fontWeight:900,lineHeight:1,transition:'color .5s'}}>{t}</span>
@@ -207,20 +121,32 @@ function CircTimer({t, total=30}) {
   );
 }
 
-/* ── BOTTOM NAV ── */
-function BNav({cur, go}) {
+/* ── Toggle ── */
+function Toggle({val,set}){
+  return <div className="toggle-track" style={{background:val?'#8dc63f':'rgba(255,255,255,.18)'}} onClick={()=>set(!val)}><div className="toggle-thumb" style={{left:val?23:3}}/></div>;
+}
+
+/* ── Toast ── */
+function Toast({msg,type='info'}){
+  const bg=type==='error'?'rgba(241,95,41,.95)':type==='success'?'rgba(141,198,63,.95)':'rgba(0,144,193,.95)';
+  return <div style={{position:'fixed',top:20,left:'50%',transform:'translateX(-50%)',background:bg,color:'#fff',borderRadius:12,padding:'12px 20px',fontWeight:700,fontSize:13,zIndex:99999,animation:'mqFadeUp .3s ease',boxShadow:'0 8px 30px rgba(0,0,0,.4)',whiteSpace:'nowrap',maxWidth:'90vw',textAlign:'center'}}>{msg}</div>;
+}
+
+/* ── BNav ── */
+function BNav({cur,go,isAdmin}){
   const items=[
     {id:'dashboard',label:'Início',IC:IcHome},
     {id:'history',label:'Histórico',IC:IcClock},
     {id:'ranking',label:'Ranking',IC:IcTrophy},
     {id:'profile',label:'Perfil',IC:IcUser},
   ];
-  return (
+  if(isAdmin) items.push({id:'admin',label:'Admin',IC:IcShield});
+  return(
     <div className="bnav">
       <div className="bnav-inner">
         {items.map(({id,label,IC})=>{
           const on=cur===id;
-          return (
+          return(
             <button key={id} className="bnav-btn" onClick={()=>go(id)}>
               <div style={{width:38,height:38,borderRadius:12,background:on?'rgba(141,198,63,.18)':'transparent',display:'flex',alignItems:'center',justifyContent:'center',transition:'background .2s'}}>
                 <IC s={20} c={on?'#8dc63f':'rgba(255,255,255,.36)'}/>
@@ -234,87 +160,80 @@ function BNav({cur, go}) {
   );
 }
 
-/* ── TOGGLE ── */
-function Toggle({val,set}) {
-  return (
-    <div className="toggle-track" style={{background:val?'#8dc63f':'rgba(255,255,255,.18)'}} onClick={()=>set(!val)}>
-      <div className="toggle-thumb" style={{left:val?23:3}}/>
-    </div>
+/* ── YouTube Button ── */
+function YTButton({url, isCorrect}){
+  if(!url) return null;
+  const cleanUrl = url.replace(/\\_/g,'_').replace(/\\/g,'');
+  const msg = isCorrect
+    ? '▶ Aprofunde seu conhecimento no vídeo'
+    : '▶ Aprenda mais sobre esse tema no vídeo';
+  const bg = isCorrect ? 'rgba(141,198,63,.15)' : 'rgba(241,95,41,.15)';
+  const border = isCorrect ? 'rgba(141,198,63,.35)' : 'rgba(241,95,41,.35)';
+  const color = isCorrect ? '#8dc63f' : '#f15f29';
+  return(
+    <a href={cleanUrl} target="_blank" rel="noopener noreferrer" style={{
+      display:'flex',alignItems:'center',gap:10,
+      marginTop:12,padding:'12px 14px',
+      background:bg,border:`1px solid ${border}`,
+      borderRadius:12,color,fontSize:13,fontWeight:700,
+      textDecoration:'none',transition:'background .2s',
+      fontFamily:'Poppins',
+    }}
+    onMouseEnter={e=>e.currentTarget.style.opacity='.85'}
+    onMouseLeave={e=>e.currentTarget.style.opacity='1'}>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill={color}><path d="M23 7s-.3-2-1.2-2.8c-1.1-1.2-2.4-1.2-3-1.3C16.2 2.8 12 2.8 12 2.8s-4.2 0-6.8.1c-.6.1-1.9.1-3 1.3C1.3 5 1 7 1 7S.7 9.2.7 11.5v2.1c0 2.2.3 4.4.3 4.4s.3 2 1.2 2.8c1.1 1.2 2.6 1.1 3.3 1.2C7.5 22 12 22 12 22s4.2 0 6.8-.2c.6-.1 1.9-.1 3-1.3.9-.8 1.2-2.8 1.2-2.8s.3-2.2.3-4.4v-2.1C23.3 9.2 23 7 23 7zM9.7 15.5V8.3l8.1 3.6-8.1 3.6z"/></svg>
+      <span style={{flex:1,lineHeight:1.3}}>{msg}</span>
+    </a>
   );
 }
 
-/* ── TOAST ── */
-function Toast({msg,type='info'}) {
-  const bg=type==='error'?'rgba(241,95,41,.95)':type==='success'?'rgba(141,198,63,.95)':'rgba(0,144,193,.95)';
-  return (
-    <div style={{
-      position:'fixed',top:20,left:'50%',transform:'translateX(-50%)',
-      background:bg,color:'#fff',
-      borderRadius:12,padding:'12px 20px',
-      fontWeight:700,fontSize:13,zIndex:99999,
-      animation:'mqFadeUp .3s ease',
-      boxShadow:'0 8px 30px rgba(0,0,0,.4)',
-      whiteSpace:'nowrap',maxWidth:'90vw',textAlign:'center',
-    }}>{msg}</div>
-  );
-}
+/* ══ SCREEN: LOGIN ══ */
+function LoginScreen({onLogin}){
+  const [mode,setMode]=useState('login');
+  const [name,setName]=useState('');
+  const [email,setEmail]=useState('');
+  const [pass,setPass]=useState('');
+  const [gender,setGender]=useState('');
+  const [birthdate,setBirthdate]=useState('');
+  const [loading,setLoading]=useState(false);
+  const [err,setErr]=useState('');
 
-/* ══════════════════════════════════════════
-   SCREEN: LOGIN
-══════════════════════════════════════════ */
-function LoginScreen({onLogin}) {
-  const [mode,setMode] = useState('login');
-  const [name,setName] = useState('');
-  const [email,setEmail] = useState('');
-  const [pass,setPass] = useState('');
-  const [gender,setGender] = useState('');
-  const [birthdate,setBirthdate] = useState('');
-  const [loading,setLoading] = useState(false);
-  const [err,setErr] = useState('');
-
-  const submit = async () => {
-    setErr(''); setLoading(true);
-    try {
-      if (mode === 'register') {
-        if (!name.trim()) { setErr('Informe seu nome'); setLoading(false); return; }
-        if (!gender) { setErr('Selecione seu gênero'); setLoading(false); return; }
-        if (!birthdate) { setErr('Informe sua data de nascimento'); setLoading(false); return; }
-        const {data,error} = await sb.auth.signUp({
-          email, password: pass,
-          options: { data: { username: name.trim(), gender, birthdate } }
-        });
-        if (error) throw error;
-        if (data.user) onLogin(data.user);
-      } else {
-        const {data,error} = await sb.auth.signInWithPassword({email,password:pass});
-        if (error) throw error;
-        if (data.user) onLogin(data.user);
+  const submit=async()=>{
+    setErr('');setLoading(true);
+    try{
+      if(mode==='register'){
+        if(!name.trim()){setErr('Informe seu nome');setLoading(false);return;}
+        if(!gender){setErr('Selecione seu gênero');setLoading(false);return;}
+        if(!birthdate){setErr('Informe sua data de nascimento');setLoading(false);return;}
+        const {data,error}=await sb.auth.signUp({email,password:pass,options:{data:{username:name.trim(),gender,birthdate}}});
+        if(error)throw error;
+        if(data.user)onLogin(data.user);
+      }else{
+        const {data,error}=await sb.auth.signInWithPassword({email,password:pass});
+        if(error)throw error;
+        if(data.user)onLogin(data.user);
       }
-    } catch(e) {
-      const msg = e.message || 'Erro ao entrar';
-      if (msg.includes('Invalid login')) setErr('Email ou senha incorretos');
-      else if (msg.includes('already registered')) setErr('Email já cadastrado');
-      else if (msg.includes('Password should')) setErr('Senha deve ter ao menos 6 caracteres');
-      else setErr(msg);
-    } finally { setLoading(false); }
+    }catch(e){
+      const m=e.message||'Erro';
+      if(m.includes('Invalid login'))setErr('Email ou senha incorretos');
+      else if(m.includes('already registered'))setErr('Email já cadastrado');
+      else if(m.includes('Password should'))setErr('Senha: mínimo 6 caracteres');
+      else setErr(m);
+    }finally{setLoading(false);}
   };
 
-  const onKey = e => { if(e.key==='Enter') submit(); };
-
-  return (
+  return(
     <div style={{minHeight:'100vh',background:'linear-gradient(155deg,#003e52 0%,#002233 60%,#231f20 100%)',display:'flex',alignItems:'center',justifyContent:'center',padding:'24px 20px'}}>
       <div style={{width:'100%',maxWidth:400,animation:'mqFadeUp .4s ease'}}>
-        {/* Logo */}
-        <div style={{textAlign:'center',marginBottom:36}}>
-          <div style={{display:'inline-flex',alignItems:'center',justifyContent:'center',width:72,height:72,borderRadius:22,background:'linear-gradient(135deg,#8dc63f,#0090C1)',marginBottom:14,boxShadow:'0 10px 36px rgba(141,198,63,.4)',animation:'mqFloat 3s ease-in-out infinite'}}>
-            <IcZap s={34}/>
+        <div style={{textAlign:'center',marginBottom:32}}>
+          <div style={{display:'inline-flex',alignItems:'center',justifyContent:'center',width:68,height:68,borderRadius:20,background:'linear-gradient(135deg,#8dc63f,#0090C1)',marginBottom:12,boxShadow:'0 10px 32px rgba(141,198,63,.4)',animation:'mqFloat 3s ease-in-out infinite'}}>
+            <IcZap s={32}/>
           </div>
-          <div style={{fontSize:28,fontWeight:900,background:'linear-gradient(90deg,#8dc63f,#F5FF0F)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',letterSpacing:'-0.5px'}}>Momento QUIZ</div>
-          <div style={{color:'rgba(255,255,255,.45)',fontSize:13,marginTop:6,lineHeight:1.5}}>Aprenda jogando. Evolua de verdade.</div>
+          <div style={{fontSize:26,fontWeight:900,background:'linear-gradient(90deg,#8dc63f,#F5FF0F)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent'}}>Momento QUIZ</div>
+          <div style={{color:'rgba(255,255,255,.42)',fontSize:12,marginTop:5}}>Aprenda jogando. Evolua de verdade.</div>
         </div>
 
-        {/* Mode toggle */}
-        <div style={{display:'flex',background:'rgba(255,255,255,.08)',borderRadius:14,padding:4,marginBottom:22}}>
+        <div style={{display:'flex',background:'rgba(255,255,255,.08)',borderRadius:14,padding:4,marginBottom:20}}>
           {['login','register'].map(m=>(
             <button key={m} onClick={()=>{setMode(m);setErr('')}} style={{flex:1,padding:'10px',border:'none',borderRadius:10,fontFamily:'Poppins',fontWeight:700,fontSize:13,cursor:'pointer',transition:'all .22s',background:mode===m?'#8dc63f':'transparent',color:mode===m?'#003e52':'rgba(255,255,255,.5)',boxShadow:mode===m?'0 3px 14px rgba(141,198,63,.3)':'none'}}>
               {m==='login'?'Entrar':'Criar Conta'}
@@ -322,25 +241,18 @@ function LoginScreen({onLogin}) {
           ))}
         </div>
 
-        {/* Fields */}
         <div style={{display:'flex',flexDirection:'column',gap:12}}>
-          {mode==='register' && (
-            <div style={{display:'flex',flexDirection:'column',gap:12,animation:'mqFadeUp .25s ease'}}>
-              <div>
+          {mode==='register'&&(
+            <>
+              <div style={{animation:'mqFadeUp .25s ease'}}>
                 <label style={{color:'rgba(255,255,255,.45)',fontSize:11,fontWeight:700,textTransform:'uppercase',letterSpacing:.8,display:'block',marginBottom:6}}>Nome</label>
-                <input className="inp" placeholder="Seu nome" value={name} onChange={e=>setName(e.target.value)} onKeyDown={onKey}/>
+                <input className="inp" placeholder="Seu nome" value={name} onChange={e=>setName(e.target.value)}/>
               </div>
               <div>
                 <label style={{color:'rgba(255,255,255,.45)',fontSize:11,fontWeight:700,textTransform:'uppercase',letterSpacing:.8,display:'block',marginBottom:6}}>Gênero</label>
                 <div style={{display:'flex',gap:8}}>
                   {[{v:'masculino',l:'Masculino',e:'👨'},{v:'feminino',l:'Feminino',e:'👩'},{v:'nao-binario',l:'Não-binário',e:'🧑'}].map(g=>(
-                    <button key={g.v} type="button" onClick={()=>setGender(g.v)} style={{
-                      flex:1,padding:'10px 6px',border:`2px solid ${gender===g.v?'#8dc63f':'rgba(255,255,255,.12)'}`,
-                      borderRadius:12,background:gender===g.v?'rgba(141,198,63,.15)':'rgba(255,255,255,.06)',
-                      color:gender===g.v?'#8dc63f':'rgba(255,255,255,.6)',
-                      fontFamily:'Poppins',fontSize:11,fontWeight:700,cursor:'pointer',
-                      transition:'all .2s',display:'flex',flexDirection:'column',alignItems:'center',gap:4,
-                    }}>
+                    <button key={g.v} type="button" onClick={()=>setGender(g.v)} style={{flex:1,padding:'10px 6px',border:`2px solid ${gender===g.v?'#8dc63f':'rgba(255,255,255,.12)'}`,borderRadius:12,background:gender===g.v?'rgba(141,198,63,.15)':'rgba(255,255,255,.06)',color:gender===g.v?'#8dc63f':'rgba(255,255,255,.6)',fontFamily:'Poppins',fontSize:10.5,fontWeight:700,cursor:'pointer',transition:'all .2s',display:'flex',flexDirection:'column',alignItems:'center',gap:4}}>
                       <span style={{fontSize:18}}>{g.e}</span>{g.l}
                     </button>
                   ))}
@@ -348,78 +260,76 @@ function LoginScreen({onLogin}) {
               </div>
               <div>
                 <label style={{color:'rgba(255,255,255,.45)',fontSize:11,fontWeight:700,textTransform:'uppercase',letterSpacing:.8,display:'block',marginBottom:6}}>Data de Nascimento</label>
-                <input className="inp" type="date" value={birthdate} onChange={e=>setBirthdate(e.target.value)}
-                  max={new Date().toISOString().split('T')[0]}
-                  style={{colorScheme:'dark'}}/>
+                <input className="inp" type="date" value={birthdate} onChange={e=>setBirthdate(e.target.value)} max={new Date().toISOString().split('T')[0]} style={{colorScheme:'dark'}}/>
               </div>
-            </div>
+            </>
           )}
           <div>
             <label style={{color:'rgba(255,255,255,.45)',fontSize:11,fontWeight:700,textTransform:'uppercase',letterSpacing:.8,display:'block',marginBottom:6}}>Email</label>
-            <input className="inp" type="email" placeholder="seu@email.com" value={email} onChange={e=>setEmail(e.target.value)} onKeyDown={onKey}/>
+            <input className="inp" type="email" placeholder="seu@email.com" value={email} onChange={e=>setEmail(e.target.value)} onKeyDown={e=>e.key==='Enter'&&submit()}/>
           </div>
           <div>
             <label style={{color:'rgba(255,255,255,.45)',fontSize:11,fontWeight:700,textTransform:'uppercase',letterSpacing:.8,display:'block',marginBottom:6}}>Senha</label>
-            <input className="inp" type="password" placeholder="Mínimo 6 caracteres" value={pass} onChange={e=>setPass(e.target.value)} onKeyDown={onKey}/>
+            <input className="inp" type="password" placeholder="Mínimo 6 caracteres" value={pass} onChange={e=>setPass(e.target.value)} onKeyDown={e=>e.key==='Enter'&&submit()}/>
           </div>
-
-          {err && <div style={{background:'rgba(241,95,41,.15)',border:'1px solid rgba(241,95,41,.35)',borderRadius:10,padding:'10px 14px',color:'#f15f29',fontSize:13,fontWeight:600}}>{err}</div>}
-
+          {err&&<div style={{background:'rgba(241,95,41,.15)',border:'1px solid rgba(241,95,41,.35)',borderRadius:10,padding:'10px 14px',color:'#f15f29',fontSize:13,fontWeight:600}}>{err}</div>}
           <button className="btn-cta" onClick={submit} disabled={loading} style={{marginTop:4}}>
-            {loading ? <span className="spinner"/> : mode==='login' ? <><IcZap s={17}/>Entrar</> : <>🎯 Criar Conta</>}
+            {loading?<span className="spinner"/>:mode==='login'?<><IcZap s={17}/>Entrar</>:<>🎯 Criar Conta</>}
           </button>
-
-          {mode==='login' && <div style={{textAlign:'center'}}><span style={{color:'rgba(255,255,255,.35)',fontSize:12,cursor:'pointer'}} onClick={async()=>{if(!email){setErr('Informe o email primeiro');return;}await sb.auth.resetPasswordForEmail(email);setErr('');alert('Email de recuperação enviado!')}}>Esqueci minha senha</span></div>}
-        </div>
-
-        <div style={{textAlign:'center',marginTop:24,color:'rgba(255,255,255,.22)',fontSize:12}}>
-          Ao continuar você aceita os<br/>termos de uso e política de privacidade.
         </div>
       </div>
     </div>
   );
 }
 
-/* ══════════════════════════════════════════
-   SCREEN: DASHBOARD
-══════════════════════════════════════════ */
-function DashboardScreen({go,startQuiz,profile,session}) {
-  const xpCur = profile?.total_score || 0;
-  const level = Math.floor(xpCur/500)+1;
-  const xpNext = level*500;
-  const xpPrev = (level-1)*500;
-  const xpPct = Math.min(100,Math.round(((xpCur-xpPrev)/(xpNext-xpPrev))*100));
-  const name = profile?.username || session?.user?.user_metadata?.username || 'Jogador';
+/* ══ SCREEN: DASHBOARD ══ */
+function DashboardScreen({go,session,profile,dailyState}){
+  const {answered,correct,question,loading:dLoading}=dailyState;
+  const xpCur=profile?.total_score||0;
+  const level=Math.floor(xpCur/500)+1;
+  const xpNext=level*500,xpPrev=(level-1)*500;
+  const xpPct=Math.min(100,Math.round(((xpCur-xpPrev)/500)*100));
+  const name=profile?.username||session?.user?.user_metadata?.username||'Jogador';
 
-  const stats=[
-    {v:profile?.quizzes_played||0, l:'Quizzes',e:'🎯'},
-    {v:`${profile?.quizzes_played>0?Math.round(((profile?.total_score||0)/((profile?.quizzes_played||1)*150))*100):0}%`, l:'Acerto',e:'✅'},
-    {v:`${profile?.current_streak||0}×`, l:'Streak',e:'⚡'},
-    {v:`#${profile?.ranking_pos||'–'}`, l:'Ranking',e:'🏆'},
-  ];
+  // countdown to next question (midnight Brasilia)
+  const [countdown,setCountdown]=useState('');
+  useEffect(()=>{
+    const tick=()=>{
+      const now=new Date();
+      const sp=new Date(now.toLocaleString('en-US',{timeZone:'America/Sao_Paulo'}));
+      const midnight=new Date(sp);
+      midnight.setDate(midnight.getDate()+1);
+      midnight.setHours(0,0,0,0);
+      const diff=midnight-sp;
+      const h=Math.floor(diff/3600000).toString().padStart(2,'0');
+      const m=Math.floor((diff%3600000)/60000).toString().padStart(2,'0');
+      const s=Math.floor((diff%60000)/1000).toString().padStart(2,'0');
+      setCountdown(`${h}:${m}:${s}`);
+    };
+    tick();
+    const id=setInterval(tick,1000);
+    return()=>clearInterval(id);
+  },[]);
 
-  return (
+  return(
     <div style={{minHeight:'100%',background:'linear-gradient(180deg,#004860 0%,#003e52 40%,#002d3d 100%)',paddingBottom:20}}>
-      {/* Header */}
       <div style={{padding:'52px 20px 18px',background:'linear-gradient(180deg,rgba(0,72,96,.8),transparent)'}}>
         <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',maxWidth:480,margin:'0 auto',marginBottom:16}}>
           <div>
             <div style={{color:'rgba(255,255,255,.45)',fontSize:12,fontWeight:600}}>Bem-vindo de volta 👋</div>
             <div style={{color:'#fff',fontSize:20,fontWeight:800,marginTop:2}}>{name}!</div>
           </div>
-          <button onClick={()=>go('profile')} style={{width:46,height:46,borderRadius:23,background:'linear-gradient(135deg,#8dc63f,#0090C1)',border:'none',cursor:'pointer',fontSize:22,boxShadow:'0 4px 16px rgba(141,198,63,.3)',transition:'transform .2s'}} onMouseEnter={e=>e.currentTarget.style.transform='scale(1.08)'} onMouseLeave={e=>e.currentTarget.style.transform='scale(1)'}>😎</button>
+          <button onClick={()=>go('profile')} style={{width:46,height:46,borderRadius:23,background:'linear-gradient(135deg,#8dc63f,#0090C1)',border:'none',cursor:'pointer',fontSize:22,boxShadow:'0 4px 16px rgba(141,198,63,.3)'}}>😎</button>
         </div>
 
         {/* XP Card */}
         <div style={{maxWidth:480,margin:'0 auto'}}>
-          <div style={{background:'linear-gradient(135deg,#001c27,#002d3d)',borderRadius:20,padding:'18px 20px 16px',border:'1px solid rgba(245,255,15,.18)',position:'relative',overflow:'hidden',boxShadow:'0 8px 36px rgba(0,0,0,.35)',animation:'mqFadeUp .5s ease'}}>
-            <div style={{position:'absolute',right:-12,top:-12,fontSize:84,opacity:.06,lineHeight:1}}>⚡</div>
+          <div style={{background:'linear-gradient(135deg,#001c27,#002d3d)',borderRadius:20,padding:'18px 20px 16px',border:'1px solid rgba(245,255,15,.18)',position:'relative',overflow:'hidden',boxShadow:'0 8px 36px rgba(0,0,0,.35)'}}>
+            <div style={{position:'absolute',right:-12,top:-12,fontSize:80,opacity:.05,lineHeight:1}}>⚡</div>
             <div style={{color:'rgba(255,255,255,.4)',fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:1.5}}>Pontuação Total</div>
-            <div style={{fontSize:50,fontWeight:900,color:'#F5FF0F',lineHeight:1.05,animation:'mqGlow 4s ease-in-out infinite',marginTop:3}}>{(xpCur).toLocaleString('pt-BR')}</div>
-            <div style={{display:'flex',alignItems:'center',gap:8,marginTop:5}}>
-              <span className="pill">Nível {level}</span>
-            </div>
-            <div style={{marginTop:13}}>
+            <div style={{fontSize:48,fontWeight:900,color:'#F5FF0F',lineHeight:1.05,animation:'mqGlow 4s ease-in-out infinite',marginTop:3}}>{xpCur.toLocaleString('pt-BR')}</div>
+            <div style={{display:'flex',alignItems:'center',gap:8,marginTop:5}}><span className="pill">Nível {level}</span><span style={{color:'rgba(255,255,255,.35)',fontSize:11}}>Streak: {profile?.current_streak||0} dias 🔥</span></div>
+            <div style={{marginTop:12}}>
               <div style={{display:'flex',justifyContent:'space-between',marginBottom:4}}>
                 <span style={{color:'rgba(255,255,255,.38)',fontSize:10}}>Próximo nível</span>
                 <span style={{color:'#F5FF0F',fontSize:10,fontWeight:700}}>{xpCur} / {xpNext} XP</span>
@@ -431,249 +341,180 @@ function DashboardScreen({go,startQuiz,profile,session}) {
       </div>
 
       <div style={{padding:'0 20px',maxWidth:480,margin:'0 auto'}}>
+        {/* Daily Quiz Card */}
+        <div style={{marginBottom:14}}>
+          {dLoading?(
+            <div className="card" style={{textAlign:'center',padding:28}}><span className="spinner" style={{margin:'0 auto',display:'block'}}/></div>
+          ):answered?(
+            /* Already answered today */
+            <div className="card" style={{background:'rgba(141,198,63,.08)',border:'1.5px solid rgba(141,198,63,.25)',padding:'20px'}}>
+              <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:14}}>
+                <span style={{fontSize:32}}>{correct?'🏆':'💪'}</span>
+                <div>
+                  <div style={{color:'#8dc63f',fontSize:11,fontWeight:800,textTransform:'uppercase',letterSpacing:1}}>Pergunta de Hoje</div>
+                  <div style={{color:'#fff',fontSize:14,fontWeight:700,marginTop:2}}>{correct?'Você acertou hoje!':'Você respondeu hoje!'}</div>
+                </div>
+              </div>
+              <div style={{background:'rgba(0,0,0,.2)',borderRadius:10,padding:'10px 12px',marginBottom:14}}>
+                <div style={{color:'rgba(255,255,255,.5)',fontSize:11,marginBottom:4}}>Próxima pergunta em</div>
+                <div style={{color:'#F5FF0F',fontSize:22,fontWeight:900,fontVariantNumeric:'tabular-nums',letterSpacing:2}}>{countdown}</div>
+              </div>
+              <button className="btn-cta" onClick={()=>go('ranking')} style={{fontSize:13}}>
+                <IcTrophy s={16} c="#fff"/>Ver minha posição no ranking
+              </button>
+            </div>
+          ):question?(
+            /* Has question for today */
+            <div className="card" style={{background:'linear-gradient(135deg,rgba(0,62,82,.8),rgba(0,45,61,.8))',border:'1.5px solid rgba(245,255,15,.2)',padding:'20px'}}>
+              <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:12}}>
+                <span style={{fontSize:20}}>🎯</span>
+                <div>
+                  <div style={{color:'#F5FF0F',fontSize:10,fontWeight:800,textTransform:'uppercase',letterSpacing:1}}>Pergunta de Hoje</div>
+                  <div style={{color:'rgba(255,255,255,.4)',fontSize:10,marginTop:1}}>Uma nova pergunta todo dia às 00h</div>
+                </div>
+              </div>
+              <p style={{color:'rgba(255,255,255,.85)',fontSize:13.5,lineHeight:1.5,marginBottom:16}}>
+                {question.question?.replace(/[\u200c\u200b\u200d\u00ad]/g,'').trim()}
+              </p>
+              <button className="btn-cta" onClick={()=>go('quiz')} style={{fontSize:14,padding:'15px'}}>
+                <IcZap s={17} c="#fff"/>Responder Agora
+              </button>
+            </div>
+          ):(
+            <div className="card" style={{textAlign:'center',padding:'24px 16px'}}>
+              <div style={{fontSize:32,marginBottom:8}}>😴</div>
+              <div style={{color:'rgba(255,255,255,.5)',fontSize:13}}>Sem pergunta agendada para hoje.</div>
+            </div>
+          )}
+        </div>
+
         {/* Stats */}
-        <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:8,marginBottom:14}}>
-          {stats.map((s,i)=>(
-            <div key={i} className="card" style={{textAlign:'center',padding:'14px 6px',animation:`mqFadeUp ${.3+i*.07}s ease`}}>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:8,marginBottom:14}}>
+          {[{v:profile?.quizzes_played||0,l:'Respondidas',e:'🎯'},{v:`${profile?.current_streak||0}×`,l:'Streak',e:'🔥'},{v:`#${profile?.ranking_pos||'–'}`,l:'Ranking',e:'🏆'}].map((s,i)=>(
+            <div key={i} className="card" style={{textAlign:'center',padding:'14px 6px'}}>
               <div style={{fontSize:18,marginBottom:2}}>{s.e}</div>
               <div style={{color:'#fff',fontSize:16,fontWeight:800}}>{s.v}</div>
               <div style={{color:'rgba(255,255,255,.38)',fontSize:9,fontWeight:600,marginTop:1}}>{s.l}</div>
             </div>
           ))}
         </div>
-
-        {/* CTA */}
-        <button className="btn-cta" onClick={startQuiz} style={{fontSize:15,padding:'18px',boxShadow:'0 8px 32px rgba(141,198,63,.4)',marginBottom:20}}>
-          <IcPlay s={17} c="#fff"/>INICIAR NOVO QUIZ
-        </button>
-
-        {/* Info box */}
-        <div className="card" style={{display:'flex',alignItems:'center',gap:14,marginBottom:8,background:'rgba(0,144,193,.12)',border:'1px solid rgba(0,144,193,.25)'}}>
-          <span style={{fontSize:26}}>💡</span>
-          <div>
-            <div style={{color:'#0090C1',fontSize:11,fontWeight:800,textTransform:'uppercase',letterSpacing:.8}}>Como funciona</div>
-            <div style={{color:'rgba(255,255,255,.7)',fontSize:12.5,marginTop:2,lineHeight:1.4}}>10 perguntas por rodada · Mais rápido = mais pontos · Acumule XP e suba no ranking!</div>
-          </div>
-        </div>
       </div>
     </div>
   );
 }
 
-/* ══════════════════════════════════════════
-   SCREEN: QUIZ
-══════════════════════════════════════════ */
-function QuizScreen({onFinish, session}) {
-  const TOTAL = 10;
-  const [questions, setQuestions] = useState([]);
-  const [qi, setQi] = useState(0);
-  const [sel, setSel] = useState(null);
-  const [t, setT] = useState(30);
-  const [pts, setPts] = useState([]);
-  const [answers, setAnswers] = useState([]);
-  const [popup, setPopup] = useState(null);
-  const [showTip, setShowTip] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [err, setErr] = useState('');
-  const startTime = useRef(Date.now());
-  const tid = useRef(null);
+/* ══ SCREEN: QUIZ (daily) ══ */
+function QuizScreen({onFinish,session,dailyState}){
+  const {question:q,loading:dLoading}=dailyState;
+  const [sel,setSel]=useState(null);
+  const [t,setT]=useState(30);
+  const [showTip,setShowTip]=useState(false);
+  const [popup,setPopup]=useState(null);
+  const [saving,setSaving]=useState(false);
+  const tid=useRef(null);
+  const startTime=useRef(Date.now());
+  const answered=sel!==null;
 
-  // Load questions
-  useEffect(() => {
-    const load = async () => {
-      try {
-        const {data, error} = await sb
-          .from('questions')
-          .select('id, question, option_a, option_b, option_c, option_d, answer_letter, justification, youtube_url')
-          .limit(400);
-        if (error) throw error;
-        // Shuffle and pick TOTAL
-        const shuffled = data.sort(()=>Math.random()-.5).slice(0, TOTAL);
-        setQuestions(shuffled);
-      } catch(e) {
-        setErr('Erro ao carregar perguntas: ' + e.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-    load();
-  }, []);
+  useEffect(()=>{
+    if(!q||answered)return;
+    tid.current=setInterval(()=>setT(prev=>{
+      if(prev<=1){clearInterval(tid.current);doAnswer(null,0);return 0;}
+      return prev-1;
+    }),1000);
+    return()=>clearInterval(tid.current);
+  },[q,answered]);
 
-  const q = questions[qi];
-  const answered = sel !== null;
-
-  const calcPts = tt => Math.max(0, tt);
-
-  useEffect(() => {
-    if (!q) return;
-    setSel(null); setShowTip(false); setT(30); setPopup(null);
-    startTime.current = Date.now();
-  }, [qi, q]);
-
-  useEffect(() => {
-    if (!q || answered) return;
-    tid.current = setInterval(() => {
-      setT(prev => {
-        if (prev <= 1) { clearInterval(tid.current); doAnswer(null, 0); return 0; }
-        return prev - 1;
-      });
-    }, 1000);
-    return () => clearInterval(tid.current);
-  }, [qi, answered, q]);
-
-  const doAnswer = (id, tLeft) => {
+  const doAnswer=async(id,tLeft)=>{
     clearInterval(tid.current);
-    setSel(id);
-    setShowTip(true);
-    const timeTaken = Math.round((Date.now() - startTime.current) / 1000);
-    const correct = id === q?.answer_letter;
-    const p = correct ? calcPts(tLeft ?? t) : 0;
-    setPts(prev => [...prev, p]);
-    setAnswers(prev => [...prev, {
-      question_id: q.id,
-      chosen_letter: id,
-      is_correct: correct,
-      time_taken_seconds: timeTaken,
-    }]);
-    if (p > 0) { setPopup(p); setTimeout(() => setPopup(null), 1400); }
-  };
-
-  const next = async () => {
-    if (qi + 1 >= questions.length) {
-      const finalPts = [...pts];
-      const finalAnswers = [...answers];
-      // Save session to DB
-      if (session?.user?.id) {
-        try {
-          const totalScore = finalPts.reduce((a,b)=>a+b,0);
-          const correctCount = finalPts.filter(p=>p>0).length;
-          const {data: sessionData} = await sb.from('quiz_sessions').insert({
-            user_id: session.user.id,
-            score: totalScore,
-            correct_answers: correctCount,
-            total_questions: questions.length,
-            accuracy: Math.round((correctCount/questions.length)*100),
-          }).select().single();
-          if (sessionData) {
-            await sb.from('session_answers').insert(
-              finalAnswers.map(a => ({...a, session_id: sessionData.id}))
-            );
-          }
-        } catch(e) { console.error('Save session error:', e); }
+    setSel(id);setShowTip(true);
+    const correct=id===q?.answer_letter;
+    const pts=Math.max(0,tLeft??t);
+    if(pts>0){setPopup(pts);setTimeout(()=>setPopup(null),1400);}
+    setSaving(true);
+    try{
+      const today=todayBrasilia();
+      await sb.from('daily_answers').insert({
+        user_id:session.user.id,
+        date:today,
+        question_id:q.id,
+        chosen_letter:id,
+        is_correct:correct,
+      });
+      if(correct||pts>0){
+        await sb.from('profiles').update({
+          total_score:sb.rpc?undefined:undefined,
+        }).eq('id',session.user.id);
+        // Update score via RPC or direct
+        await sb.rpc('increment_score',{uid:session.user.id,pts}).catch(()=>{
+          sb.from('profiles').select('total_score').eq('id',session.user.id).single().then(({data})=>{
+            if(data) sb.from('profiles').update({total_score:(data.total_score||0)+pts,quizzes_played:(data.quizzes_played||0)+1}).eq('id',session.user.id);
+          });
+        });
       }
-      onFinish(finalPts, questions);
-    } else {
-      setQi(qi + 1);
-    }
+      setTimeout(()=>{onFinish({correct,pts,question:q});},100);
+    }catch(e){console.error(e);}finally{setSaving(false);}
   };
 
-  if (loading) return (
-    <div style={{height:'100vh',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',background:'#002d3d',gap:16}}>
-      <span className="spinner"/>
-      <span style={{color:'rgba(255,255,255,.5)',fontSize:13}}>Carregando perguntas...</span>
-    </div>
-  );
+  if(dLoading) return <div style={{height:'100vh',display:'flex',alignItems:'center',justifyContent:'center',background:'#002d3d',flexDirection:'column',gap:16}}><span className="spinner"/><span style={{color:'rgba(255,255,255,.5)',fontSize:13}}>Carregando...</span></div>;
+  if(!q) return <div style={{height:'100vh',display:'flex',alignItems:'center',justifyContent:'center',background:'#002d3d',flexDirection:'column',gap:12,padding:24,textAlign:'center'}}><span style={{fontSize:36}}>😴</span><span style={{color:'rgba(255,255,255,.5)'}}>Sem pergunta para hoje.</span></div>;
 
-  if (err) return (
-    <div style={{height:'100vh',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',background:'#002d3d',gap:16,padding:24,textAlign:'center'}}>
-      <span style={{fontSize:36}}>😞</span>
-      <span style={{color:'#f15f29',fontSize:14}}>{err}</span>
-      <button className="btn-ghost" onClick={()=>window.location.reload()} style={{maxWidth:200}}>Tentar novamente</button>
-    </div>
-  );
+  const opts=[{id:'a',txt:q.option_a},{id:'b',txt:q.option_b},{id:'c',txt:q.option_c},{id:'d',txt:q.option_d}].filter(o=>o.txt);
 
-  if (!q) return null;
-
-  const opts = [
-    {id:'a', txt: q.option_a},
-    {id:'b', txt: q.option_b},
-    {id:'c', txt: q.option_c},
-    {id:'d', txt: q.option_d},
-  ].filter(o => o.txt);
-
-  return (
+  return(
     <div style={{minHeight:'100%',background:'linear-gradient(180deg,#002d3d 0%,#003e52 100%)',display:'flex',flexDirection:'column'}}>
-      {/* Header */}
-      <div style={{padding:'48px 20px 10px',maxWidth:480,margin:'0 auto',width:'100%'}}>
+      <div style={{padding:'52px 20px 10px',maxWidth:480,margin:'0 auto',width:'100%'}}>
         <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:10}}>
-          <span style={{color:'rgba(255,255,255,.5)',fontSize:12,fontWeight:700}}>Pergunta {qi+1} de {questions.length}</span>
+          <span style={{color:'rgba(255,255,255,.5)',fontSize:12,fontWeight:700}}>🗓️ Pergunta de Hoje</span>
           <span className="pill">🏥 Saúde</span>
         </div>
-        <div className="progress-bar"><div className="progress-fill" style={{width:`${(qi/questions.length)*100}%`}}/></div>
       </div>
 
-      {/* Timer */}
-      <div style={{padding:'10px 20px 4px',display:'flex',justifyContent:'center',position:'relative',maxWidth:480,margin:'0 auto',width:'100%'}}>
+      <div style={{padding:'8px 20px 4px',display:'flex',justifyContent:'center',position:'relative',maxWidth:480,margin:'0 auto',width:'100%'}}>
         <CircTimer t={t}/>
-        {popup && (
-          <div style={{position:'absolute',top:'50%',right:40,transform:'translateY(-50%)',color:'#F5FF0F',fontSize:20,fontWeight:900,animation:'mqScorePop 1.4s ease-out forwards',textShadow:'0 0 16px #F5FF0F88',pointerEvents:'none'}}>
-            +{popup} pts!
-          </div>
-        )}
+        {popup&&<div style={{position:'absolute',top:'50%',right:40,transform:'translateY(-50%)',color:'#F5FF0F',fontSize:20,fontWeight:900,animation:'mqScorePop 1.4s ease-out forwards',textShadow:'0 0 16px #F5FF0F88',pointerEvents:'none'}}>+{popup} pts!</div>}
       </div>
 
-      {/* Question */}
       <div style={{padding:'12px 20px 10px',maxWidth:480,margin:'0 auto',width:'100%'}}>
         <p style={{color:'#fff',fontSize:15,fontWeight:700,lineHeight:1.55,animation:'mqFadeUp .3s ease'}}>
-          {q.question.replace(/[\u200c\u200b\u200d\u00ad‌]/g,'').trim()}
+          {q.question?.replace(/[\u200c\u200b\u200d\u00ad]/g,'').trim()}
         </p>
       </div>
 
-      {/* Options */}
       <div style={{padding:'0 20px',flex:1,maxWidth:480,margin:'0 auto',width:'100%'}}>
-        {opts.map((o) => {
-          const isCorrect = o.id === q.answer_letter;
-          const isSel = o.id === sel;
-          let cls = 'opt';
-          if (answered) {
-            if (isCorrect) cls = 'opt correct';
-            else if (isSel) cls = 'opt wrong';
-            else cls = 'opt dim';
-          }
-          return (
-            <button key={o.id} className={cls} disabled={answered} onClick={()=>doAnswer(o.id, t)}>
+        {opts.map(o=>{
+          const isCorrect=o.id===q.answer_letter;
+          const isSel=o.id===sel;
+          let cls='opt';
+          if(answered){if(isCorrect)cls='opt correct';else if(isSel)cls='opt wrong';else cls='opt dim';}
+          return(
+            <button key={o.id} className={cls} disabled={answered||saving} onClick={()=>doAnswer(o.id,t)}>
               <span style={{width:30,height:30,borderRadius:8,flexShrink:0,display:'flex',alignItems:'center',justifyContent:'center',fontSize:12,fontWeight:800,background:answered?(isCorrect?'#8dc63f':(isSel?'#f15f29':'rgba(255,255,255,.07)')):'rgba(255,255,255,.13)',color:'#fff'}}>
-                {answered && isCorrect ? <IcCheck s={14} c="#fff"/> : answered && isSel ? <IcX s={14} c="#fff"/> : o.id.toUpperCase()}
+                {answered&&isCorrect?<IcCheck s={14} c="#fff"/>:answered&&isSel?<IcX s={14} c="#fff"/>:o.id.toUpperCase()}
               </span>
               <span style={{color:answered&&!isCorrect&&!isSel?'rgba(255,255,255,.28)':'#fff',fontSize:13.5,lineHeight:1.3}}>
-                {o.txt.replace(/[\u200c\u200b\u200d\u00ad‌]/g,'').trim()}
+                {o.txt?.replace(/[\u200c\u200b\u200d\u00ad]/g,'').trim()}
               </span>
             </button>
           );
         })}
       </div>
 
-      {/* Justification — sempre aparece após responder */}
-      {showTip && (
+      {/* Tip box — always shows after answer */}
+      {showTip&&(
         <div style={{margin:'6px 20px',background:'linear-gradient(135deg,#001c27,#002a38)',borderRadius:16,padding:'14px 16px',border:'1px solid rgba(245,255,15,.2)',animation:'mqSlideUp .3s ease',maxWidth:480,alignSelf:'center',width:'calc(100% - 40px)'}}>
           <div style={{color:'#F5FF0F',fontSize:10,fontWeight:800,letterSpacing:.8,marginBottom:6}}>💡 SABIA QUE...</div>
           {q.justification
-            ? <p style={{color:'rgba(255,255,255,.82)',fontSize:13,lineHeight:1.6}}>{q.justification}</p>
-            : <p style={{color:'rgba(255,255,255,.5)',fontSize:13,fontStyle:'italic'}}>A resposta correta é a letra <strong style={{color:'#8dc63f'}}>{q.answer_letter?.toUpperCase()}</strong>.</p>
+            ?<p style={{color:'rgba(255,255,255,.82)',fontSize:13,lineHeight:1.6}}>{q.justification}</p>
+            :<p style={{color:'rgba(255,255,255,.5)',fontSize:13}}>A resposta correta é a letra <strong style={{color:'#8dc63f'}}>{q.answer_letter?.toUpperCase()}</strong>.</p>
           }
-          {q.youtube_url && (
-            <a href={q.youtube_url} target="_blank" rel="noopener noreferrer" style={{
-              display:'inline-flex',alignItems:'center',gap:7,
-              marginTop:10,padding:'8px 14px',
-              background:'rgba(255,0,0,.18)',border:'1px solid rgba(255,0,0,.35)',
-              borderRadius:10,color:'#ff6b6b',fontSize:12,fontWeight:700,
-              textDecoration:'none',transition:'background .2s',
-            }}
-            onMouseEnter={e=>e.currentTarget.style.background='rgba(255,0,0,.28)'}
-            onMouseLeave={e=>e.currentTarget.style.background='rgba(255,0,0,.18)'}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="#ff6b6b"><path d="M23 7s-.3-2-1.2-2.8c-1.1-1.2-2.4-1.2-3-1.3C16.2 2.8 12 2.8 12 2.8s-4.2 0-6.8.1c-.6.1-1.9.1-3 1.3C1.3 5 1 7 1 7S.7 9.2.7 11.5v2.1c0 2.2.3 4.4.3 4.4s.3 2 1.2 2.8c1.1 1.2 2.6 1.1 3.3 1.2C7.5 22 12 22 12 22s4.2 0 6.8-.2c.6-.1 1.9-.1 3-1.3.9-.8 1.2-2.8 1.2-2.8s.3-2.2.3-4.4v-2.1C23.3 9.2 23 7 23 7zM9.7 15.5V8.3l8.1 3.6-8.1 3.6z"/></svg>
-              Assistir vídeo relacionado
-            </a>
-          )}
+          <YTButton url={q.youtube_url} isCorrect={sel===q.answer_letter}/>
         </div>
       )}
 
-      {/* Next */}
-      {answered && (
+      {answered&&(
         <div style={{padding:'10px 20px 20px',display:'flex',justifyContent:'flex-end',maxWidth:480,margin:'0 auto',width:'100%'}}>
-          <button className="btn-cta" onClick={next} style={{width:'auto',padding:'13px 22px',fontSize:13.5,animation:'mqFadeUp .3s ease'}}>
-            {qi+1>=questions.length?'🏁 Ver Resultado':'Próxima'}
-            <IcArrow s={15} c="#fff"/>
+          <button className="btn-cta" onClick={()=>onFinish({correct:sel===q.answer_letter,pts:Math.max(0,t),question:q})} style={{width:'auto',padding:'13px 22px',fontSize:13.5,animation:'mqFadeUp .3s ease'}}>
+            🏁 Ver Resultado <IcArrow s={15} c="#fff"/>
           </button>
         </div>
       )}
@@ -681,114 +522,80 @@ function QuizScreen({onFinish, session}) {
   );
 }
 
-/* ══════════════════════════════════════════
-   SCREEN: RESULT
-══════════════════════════════════════════ */
-function ResultScreen({scores, questions, onAgain, onHome}) {
-  const [show, setShow] = useState(false);
-  useEffect(()=>{setTimeout(()=>setShow(true),120);},[]);
+/* ══ SCREEN: RESULT ══ */
+function ResultScreen({result,onHome}){
+  const [show,setShow]=useState(false);
+  useEffect(()=>{setTimeout(()=>setShow(true),100);},[]);
+  const {correct,pts,question:q}=result||{};
 
-  const total = scores.reduce((a,b)=>a+b,0);
-  const correct = scores.filter(s=>s>0).length;
-  const acc = Math.round((correct/(scores.length||1))*100);
-  const trophy = acc===100?'🏆':acc>=70?'🥈':'🥉';
-  const msg = acc===100?'Incrível! Você gabaritou! 🔥':acc>=70?'Bom trabalho! Continue assim! 💪':'Continue praticando! 📚';
-
-  return (
+  return(
     <div style={{minHeight:'100vh',background:'linear-gradient(155deg,#001c27 0%,#002d3d 50%,#231f20 100%)',display:'flex',alignItems:'center',justifyContent:'center',padding:'40px 20px'}}>
-      <Confetti active={show && acc >= 70}/>
+      <Confetti active={show&&correct}/>
       <div style={{width:'100%',maxWidth:400,textAlign:'center',animation:'mqFadeUp .4s ease',position:'relative',zIndex:1}}>
-        <div style={{fontSize:72,animation:'mqBounce 1.5s ease .2s infinite',display:'inline-block'}}>{trophy}</div>
-        <div style={{color:'rgba(255,255,255,.42)',fontSize:11,fontWeight:700,textTransform:'uppercase',letterSpacing:2,marginTop:8}}>Resultado Final</div>
-        <div style={{fontSize:64,fontWeight:900,color:'#F5FF0F',lineHeight:1,animation:'mqGlow 2s ease-in-out infinite',marginTop:4}}>{total}</div>
-        <div style={{color:'rgba(255,255,255,.4)',fontSize:13}}>pontos</div>
-        <div style={{color:'rgba(255,255,255,.88)',fontSize:15,fontWeight:700,marginTop:12}}>{msg}</div>
-
-        <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:8,marginTop:18}}>
-          {[{l:'Acertos',v:`${correct}/${scores.length}`},{l:'Precisão',v:`${acc}%`},{l:'Pontos',v:total}].map((s,i)=>(
-            <div key={i} className="card" style={{padding:'14px 6px',animation:`mqFadeUp ${.4+i*.1}s ease`}}>
-              <div style={{color:'#F5FF0F',fontSize:19,fontWeight:900}}>{s.v}</div>
-              <div style={{color:'rgba(255,255,255,.38)',fontSize:10,marginTop:2}}>{s.l}</div>
-            </div>
-          ))}
+        <div style={{fontSize:72,animation:'mqBounce 1.5s ease .2s infinite',display:'inline-block'}}>{correct?'🏆':'💪'}</div>
+        <div style={{color:'rgba(255,255,255,.42)',fontSize:11,fontWeight:700,textTransform:'uppercase',letterSpacing:2,marginTop:8}}>Resultado de Hoje</div>
+        <div style={{fontSize:56,fontWeight:900,color:'#F5FF0F',lineHeight:1,animation:'mqGlow 2s ease-in-out infinite',marginTop:4}}>+{pts||0}</div>
+        <div style={{color:'rgba(255,255,255,.4)',fontSize:13}}>pontos ganhos</div>
+        <div style={{color:'rgba(255,255,255,.88)',fontSize:15,fontWeight:700,marginTop:12}}>
+          {correct?'Resposta certa! Continue amanhã 🔥':'Não desista! Volte amanhã 💪'}
         </div>
 
-        {acc===100&&(
-          <div style={{marginTop:14,padding:'12px 14px',background:'rgba(245,255,15,.1)',borderRadius:14,border:'1px solid rgba(245,255,15,.28)',display:'flex',alignItems:'center',gap:12,animation:'mqPulse 1.2s ease infinite'}}>
-            <span style={{fontSize:28}}>🏅</span>
-            <div style={{textAlign:'left'}}>
-              <div style={{color:'#F5FF0F',fontSize:10,fontWeight:800,letterSpacing:.8}}>GABARITO PERFEITO!</div>
-              <div style={{color:'#fff',fontSize:13,fontWeight:700}}>Você é fera demais! ⚡</div>
-            </div>
+        <div className="card" style={{textAlign:'left',marginTop:20,padding:'16px'}}>
+          <div style={{color:'rgba(255,255,255,.4)',fontSize:10,fontWeight:800,textTransform:'uppercase',letterSpacing:.8,marginBottom:8}}>Resposta correta</div>
+          <div style={{color:'#8dc63f',fontSize:13,fontWeight:600,marginBottom:q?.justification?10:0}}>
+            {q?.answer_letter?.toUpperCase()}. {q?.[`option_${q.answer_letter}`]}
           </div>
-        )}
+          {q?.justification&&<p style={{color:'rgba(255,255,255,.7)',fontSize:12.5,lineHeight:1.55}}>{q.justification}</p>}
+          <YTButton url={q?.youtube_url} isCorrect={correct}/>
+        </div>
 
         <div style={{display:'flex',flexDirection:'column',gap:10,marginTop:18}}>
-          <button className="btn-cta" onClick={onAgain}><IcRefresh s={16} c="#fff"/>Jogar Novamente</button>
-          <button className="btn-ghost" onClick={onHome}>🏠 Voltar ao Início</button>
+          <button className="btn-cta" onClick={()=>onHome('ranking')}><IcTrophy s={16} c="#fff"/>Ver Ranking</button>
+          <button className="btn-ghost" onClick={()=>onHome('dashboard')}>🏠 Voltar ao Início</button>
         </div>
       </div>
     </div>
   );
 }
 
-/* ══════════════════════════════════════════
-   SCREEN: HISTORY
-══════════════════════════════════════════ */
-function HistoryScreen({session}) {
-  const [hist, setHist] = useState([]);
-  const [loading, setLoading] = useState(true);
-
+/* ══ SCREEN: HISTORY ══ */
+function HistoryScreen({session}){
+  const [hist,setHist]=useState([]);
+  const [loading,setLoading]=useState(true);
   useEffect(()=>{
-    const load = async () => {
-      try {
-        const {data} = await sb.from('quiz_sessions')
-          .select('*')
-          .eq('user_id', session?.user?.id)
-          .order('completed_at',{ascending:false})
-          .limit(20);
+    const load=async()=>{
+      try{
+        const {data}=await sb.from('daily_answers')
+          .select('*,questions(question,answer_letter,youtube_url)')
+          .eq('user_id',session?.user?.id)
+          .order('answered_at',{ascending:false}).limit(30);
         setHist(data||[]);
-      } finally { setLoading(false); }
+      }finally{setLoading(false);}
     };
-    if(session?.user?.id) load();
-    else setLoading(false);
+    if(session?.user?.id)load();else setLoading(false);
   },[session]);
 
-  const fmt = s => {
-    const d = new Date(s);
-    return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'}) + ' · ' + d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-  };
+  const fmt=s=>{const d=new Date(s);return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'})+' · '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});};
 
-  return (
+  return(
     <div style={{minHeight:'100%',background:'linear-gradient(180deg,#004060 0%,#003e52 30%,#002d3d 100%)',paddingBottom:80}}>
-      <div className="section-header" style={{maxWidth:480,margin:'0 auto',width:'100%'}}>
-        <h1>Meu Histórico</h1>
-        <p>Acompanhe sua evolução</p>
+      <div style={{padding:'52px 20px 16px',maxWidth:480,margin:'0 auto'}}>
+        <h1 style={{fontSize:22,fontWeight:900}}>Meu Histórico</h1>
+        <p style={{color:'rgba(255,255,255,.42)',fontSize:13,marginTop:3}}>Suas respostas diárias</p>
       </div>
-
       <div style={{padding:'0 20px',maxWidth:480,margin:'0 auto'}}>
-        {loading ? (
-          <div style={{textAlign:'center',padding:40}}><span className="spinner" style={{margin:'0 auto',display:'block'}}/></div>
-        ) : hist.length === 0 ? (
-          <div className="card" style={{textAlign:'center',padding:'40px 20px'}}>
-            <div style={{fontSize:36,marginBottom:12}}>🎯</div>
-            <div style={{color:'rgba(255,255,255,.5)',fontSize:14}}>Nenhum quiz jogado ainda.<br/>Que tal começar agora?</div>
-          </div>
-        ) : hist.map((h,i)=>(
-          <div key={h.id} className="card" style={{marginBottom:10,display:'flex',alignItems:'center',gap:12,animation:`mqFadeUp ${.2+i*.05}s ease`}}>
-            <span style={{fontSize:26,flexShrink:0}}>{h.accuracy===100?'🏆':h.accuracy>=70?'✨':'💪'}</span>
+        {loading?<div style={{textAlign:'center',padding:40}}><span className="spinner" style={{margin:'0 auto',display:'block'}}/></div>
+        :hist.length===0?<div className="card" style={{textAlign:'center',padding:'40px 20px'}}><div style={{fontSize:36,marginBottom:12}}>🎯</div><div style={{color:'rgba(255,255,255,.5)',fontSize:14}}>Nenhuma resposta ainda.</div></div>
+        :hist.map((h,i)=>(
+          <div key={h.id} className="card" style={{marginBottom:10,display:'flex',alignItems:'flex-start',gap:12,animation:`mqFadeUp ${.2+i*.04}s ease`}}>
+            <span style={{fontSize:24,flexShrink:0,marginTop:2}}>{h.is_correct?'✅':'❌'}</span>
             <div style={{flex:1,minWidth:0}}>
-              <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
-                <span style={{color:'#fff',fontWeight:700,fontSize:13}}>Quiz de Saúde</span>
-                <span style={{color:'#F5FF0F',fontWeight:900,fontSize:15}}>{h.score} pts</span>
+              <div style={{color:'#fff',fontWeight:600,fontSize:13,lineHeight:1.4,marginBottom:4}}>
+                {h.questions?.question?.replace(/[\u200c\u200b\u200d\u00ad]/g,'').trim()?.substring(0,80)}...
               </div>
-              <div style={{color:'rgba(255,255,255,.36)',fontSize:10.5,marginTop:2}}>{fmt(h.completed_at)} · {h.correct_answers}/{h.total_questions} acertos</div>
-              <div style={{marginTop:6}}>
-                <div style={{display:'flex',justifyContent:'space-between',marginBottom:3}}>
-                  <span style={{color:'rgba(255,255,255,.32)',fontSize:9}}>Precisão</span>
-                  <span style={{color:'#8dc63f',fontSize:9,fontWeight:700}}>{h.accuracy}%</span>
-                </div>
-                <div className="progress-bar" style={{height:3}}><div className="progress-fill" style={{width:`${h.accuracy}%`}}/></div>
+              <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+                <span style={{color:'rgba(255,255,255,.36)',fontSize:10}}>{fmt(h.answered_at)}</span>
+                <span style={{color:h.is_correct?'#8dc63f':'#f15f29',fontWeight:800,fontSize:12}}>{h.is_correct?'Acertou':'Errou'}</span>
               </div>
             </div>
           </div>
@@ -798,323 +605,396 @@ function HistoryScreen({session}) {
   );
 }
 
-/* ══════════════════════════════════════════
-   SCREEN: RANKING
-══════════════════════════════════════════ */
-function RankingScreen({session}) {
-  const [rank, setRank] = useState([]);
-  const [loading, setLoading] = useState(true);
+/* ══ SCREEN: RANKING ══ */
+function RankingScreen({session}){
+  const [rank,setRank]=useState([]);
+  const [loading,setLoading]=useState(true);
+  useEffect(()=>{
+    sb.from('ranking').select('*').limit(50).then(({data})=>{setRank(data||[]);setLoading(false);});
+  },[]);
+  const myId=session?.user?.id;
+  const podium=rank.slice(0,3),rest=rank.slice(3);
+  const po=podium.length>=3?[podium[1],podium[0],podium[2]]:podium;
+  const pH=[76,100,64],pC=['#C0C0C0','#FFD700','#CD7F32'],pL=['2º','1º','3º'];
+  return(
+    <div style={{minHeight:'100%',background:'linear-gradient(180deg,#004060 0%,#003e52 35%,#002233 100%)',paddingBottom:80}}>
+      <div style={{background:'linear-gradient(180deg,#004d65,transparent)',padding:'52px 20px 0',maxWidth:480,margin:'0 auto'}}>
+        <div style={{color:'#fff',fontSize:22,fontWeight:900,marginBottom:20}}>🏆 Ranking Global</div>
+        {loading?<div style={{textAlign:'center',padding:60}}><span className="spinner" style={{margin:'0 auto',display:'block'}}/></div>
+        :rank.length===0?<div className="card" style={{textAlign:'center',padding:'40px 20px',marginBottom:12}}><div style={{fontSize:36,marginBottom:12}}>🏆</div><div style={{color:'rgba(255,255,255,.5)',fontSize:14}}>Seja o primeiro a jogar!</div></div>
+        :<>
+          {podium.length>=3&&(
+            <div style={{display:'flex',alignItems:'flex-end',justifyContent:'center',gap:6,marginBottom:12}}>
+              {po.map((p,i)=>(
+                <div key={p.id} style={{textAlign:'center',width:100}}>
+                  <div style={{fontSize:i===1?28:20,marginBottom:i===1?0:4,animation:i===1?'mqFloat 2.5s ease-in-out infinite':'none'}}>{p.avatar_emoji||'😊'}</div>
+                  {i===1&&<div style={{fontSize:16,marginBottom:2}}>👑</div>}
+                  <div style={{color:'#fff',fontSize:10,fontWeight:700,marginBottom:5,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{p.username}</div>
+                  <div style={{height:pH[i],background:`linear-gradient(0deg,${pC[i]}33,${pC[i]}11)`,border:`2px solid ${pC[i]}`,borderRadius:'8px 8px 0 0',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:2}}>
+                    <div style={{color:pC[i],fontWeight:900,fontSize:14}}>{pL[i]}</div>
+                    <div style={{color:'#fff',fontSize:10}}>{(p.total_score||0).toLocaleString('pt-BR')}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          <div style={{padding:'4px 0'}}>
+            {rest.map((p,i)=>{
+              const isMe=p.id===myId;
+              return(
+                <div key={p.id} className="card" style={{marginBottom:8,display:'flex',alignItems:'center',gap:12,border:isMe?'1.5px solid #8dc63f':'1px solid rgba(255,255,255,.08)',background:isMe?'rgba(141,198,63,.1)':'rgba(255,255,255,.05)',animation:`mqFadeUp ${.15+i*.04}s ease`}}>
+                  <span style={{color:'rgba(255,255,255,.36)',fontWeight:800,fontSize:11,width:22,textAlign:'center'}}>#{p.position}</span>
+                  <span style={{fontSize:20}}>{p.avatar_emoji||'😊'}</span>
+                  <span style={{flex:1,color:isMe?'#8dc63f':'#fff',fontWeight:isMe?700:500,fontSize:13}}>{p.username}{isMe?' (Você)':''}</span>
+                  <span style={{color:'#F5FF0F',fontWeight:900,fontSize:14}}>{(p.total_score||0).toLocaleString('pt-BR')}</span>
+                </div>
+              );
+            })}
+          </div>
+        </>}
+      </div>
+    </div>
+  );
+}
+
+/* ══ SCREEN: PROFILE ══ */
+function ProfileScreen({session,profile,onLogout,go}){
+  const name=profile?.username||session?.user?.user_metadata?.username||'Jogador';
+  const xpCur=profile?.total_score||0;
+  const level=Math.floor(xpCur/500)+1;
+  const xpPct=Math.min(100,Math.round(((xpCur-(level-1)*500)/500)*100));
+  return(
+    <div style={{minHeight:'100%',background:'linear-gradient(180deg,#004060 0%,#003e52 40%,#002233 100%)',paddingBottom:80}}>
+      <div style={{background:'linear-gradient(180deg,#004d65,transparent)',padding:'52px 20px 24px',textAlign:'center',maxWidth:480,margin:'0 auto'}}>
+        <div style={{width:76,height:76,borderRadius:38,background:'linear-gradient(135deg,#8dc63f,#0090C1)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:34,boxShadow:'0 0 0 4px rgba(141,198,63,.2)',margin:'0 auto 12px',animation:'mqFloat 3s ease-in-out infinite'}}>{profile?.avatar_emoji||'😎'}</div>
+        <div style={{color:'#fff',fontSize:19,fontWeight:800}}>{name}</div>
+        <div style={{color:'rgba(255,255,255,.38)',fontSize:12,marginTop:2}}>{session?.user?.email}</div>
+        <div style={{display:'flex',alignItems:'center',justifyContent:'center',gap:8,marginTop:10}}><span className="pill">⭐ Nível {level}</span></div>
+        <div style={{marginTop:14}}>
+          <div style={{display:'flex',justifyContent:'space-between',marginBottom:4}}><span style={{color:'rgba(255,255,255,.38)',fontSize:10}}>XP para Nível {level+1}</span><span style={{color:'#F5FF0F',fontSize:10,fontWeight:700}}>{xpCur}/{level*500}</span></div>
+          <div className="progress-bar"><div className="progress-fill" style={{width:`${xpPct}%`}}/></div>
+        </div>
+      </div>
+      <div style={{padding:'0 20px',maxWidth:480,margin:'0 auto'}}>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,marginBottom:16}}>
+          {[{l:'Total de Pontos',v:xpCur.toLocaleString('pt-BR'),e:'⚡'},{l:'Respondidas',v:profile?.quizzes_played||0,e:'🎯'},{l:'Streak Atual',v:`${profile?.current_streak||0} dias`,e:'🔥'},{l:'Nível',v:level,e:'🏆'}].map((s,i)=>(
+            <div key={i} className="card" style={{display:'flex',alignItems:'center',gap:10}}>
+              <span style={{fontSize:22}}>{s.e}</span>
+              <div><div style={{color:'#fff',fontWeight:800,fontSize:16}}>{s.v}</div><div style={{color:'rgba(255,255,255,.36)',fontSize:10}}>{s.l}</div></div>
+            </div>
+          ))}
+        </div>
+        <button onClick={()=>go('settings')} className="btn-ghost" style={{marginBottom:10}}>⚙️ Configurações</button>
+        <button onClick={onLogout} style={{width:'100%',padding:'16px',background:'rgba(241,95,41,.12)',border:'1.5px solid rgba(241,95,41,.32)',borderRadius:16,color:'#f15f29',fontFamily:'Poppins',fontWeight:800,fontSize:14,cursor:'pointer',transition:'all .2s'}}>🚪 Sair da Conta</button>
+      </div>
+    </div>
+  );
+}
+
+/* ══ SCREEN: SETTINGS ══ */
+function SettingsScreen({onLogout,go}){
+  const [sound,setSound]=useState(true);
+  const [notif,setNotif]=useState(true);
+  const Row=({icon,label,right,last,onClick})=>(
+    <div onClick={onClick} style={{display:'flex',alignItems:'center',gap:13,padding:'15px 16px',cursor:onClick?'pointer':'default',borderBottom:last?'none':'1px solid rgba(255,255,255,.05)',transition:'background .15s'}} onMouseEnter={e=>{if(onClick)e.currentTarget.style.background='rgba(255,255,255,.04)'}} onMouseLeave={e=>{e.currentTarget.style.background='transparent'}}>
+      <span style={{fontSize:18,flexShrink:0}}>{icon}</span>
+      <span style={{flex:1,color:'#fff',fontSize:14,fontWeight:500}}>{label}</span>
+      {right}
+    </div>
+  );
+  const Sec=({title,children})=>(
+    <div style={{padding:'0 20px',marginBottom:18,maxWidth:480,margin:'0 auto 18px'}}>
+      <div style={{color:'rgba(255,255,255,.32)',fontSize:10,fontWeight:800,textTransform:'uppercase',letterSpacing:1.5,marginBottom:8,paddingLeft:4}}>{title}</div>
+      <div style={{background:'rgba(255,255,255,.06)',borderRadius:16,overflow:'hidden',border:'1px solid rgba(255,255,255,.08)'}}>{children}</div>
+    </div>
+  );
+  return(
+    <div style={{minHeight:'100%',background:'linear-gradient(180deg,#004060 0%,#003e52 30%,#002233 100%)',paddingBottom:80}}>
+      <div style={{padding:'52px 20px 20px',maxWidth:480,margin:'0 auto'}}>
+        <button onClick={()=>go('profile')} style={{background:'none',border:'none',color:'rgba(255,255,255,.5)',cursor:'pointer',fontFamily:'Poppins',fontSize:13,fontWeight:600,display:'flex',alignItems:'center',gap:6,marginBottom:12,padding:0}}>← Voltar</button>
+        <h1 style={{fontSize:22,fontWeight:900}}>Configurações</h1>
+      </div>
+      <Sec title="Notificações"><Row icon="🔔" label="Notificações" right={<Toggle val={notif} set={setNotif}/>}/><Row icon="⏰" label="Lembretes diários" right={<Toggle val={false} set={()=>{}}/>} last/></Sec>
+      <Sec title="Preferências"><Row icon="🔊" label="Sons do jogo" right={<Toggle val={sound} set={setSound}/>}/><Row icon="🌙" label="Tema escuro" right={<Toggle val={true} set={()=>{}}/>} last/></Sec>
+      <Sec title="Conta"><Row icon="🔒" label="Alterar senha" right={<span style={{color:'rgba(255,255,255,.28)',fontSize:13}}>→</span>} last onClick={()=>{}}/></Sec>
+      <div style={{padding:'0 20px',maxWidth:480,margin:'0 auto'}}>
+        <button onClick={onLogout} style={{width:'100%',padding:'16px',background:'rgba(241,95,41,.12)',border:'1.5px solid rgba(241,95,41,.32)',borderRadius:16,color:'#f15f29',fontFamily:'Poppins',fontWeight:800,fontSize:14,cursor:'pointer'}}>🚪 Sair da Conta</button>
+      </div>
+    </div>
+  );
+}
+
+/* ══ SCREEN: ADMIN ══ */
+function AdminScreen({session,go}){
+  const [stats,setStats]=useState(null);
+  const [users,setUsers]=useState([]);
+  const [tab,setTab]=useState('stats');
+  const [loading,setLoading]=useState(true);
+  const [testQ,setTestQ]=useState(null);
+  const [testSel,setTestSel]=useState(null);
+  const [newAdminEmail,setNewAdminEmail]=useState('');
+  const [adminMsg,setAdminMsg]=useState('');
 
   useEffect(()=>{
-    const load = async () => {
-      try {
-        const {data} = await sb.from('ranking').select('*').limit(50);
-        setRank(data||[]);
-      } finally { setLoading(false); }
+    const load=async()=>{
+      try{
+        const [{data:st},{data:us}]=await Promise.all([
+          sb.from('admin_stats').select('*').single(),
+          sb.from('profiles').select('*').order('total_score',{ascending:false}).limit(50),
+        ]);
+        setStats(st);setUsers(us||[]);
+      }finally{setLoading(false);}
     };
     load();
   },[]);
 
-  const myId = session?.user?.id;
-  const podium = rank.slice(0,3);
-  const rest = rank.slice(3);
-  const podiumOrder = podium.length>=3 ? [podium[1],podium[0],podium[2]] : podium;
-  const podiumH = [76,100,64];
-  const podiumC = ['#C0C0C0','#FFD700','#CD7F32'];
-  const podiumLabel = ['2º','1º','3º'];
+  const loadTestQ=async()=>{
+    const {data}=await sb.from('questions').select('*').limit(300);
+    if(data){const r=data[Math.floor(Math.random()*data.length)];setTestQ(r);setTestSel(null);}
+  };
 
-  return (
-    <div style={{minHeight:'100%',background:'linear-gradient(180deg,#004060 0%,#003e52 35%,#002233 100%)',paddingBottom:80}}>
-      <div style={{background:'linear-gradient(180deg,#004d65,transparent)',padding:'52px 20px 0',maxWidth:480,margin:'0 auto'}}>
-        <div style={{color:'#fff',fontSize:22,fontWeight:900,marginBottom:20}}>🏆 Ranking Global</div>
+  const toggleAdmin=async(uid,cur)=>{
+    await sb.from('profiles').update({is_admin:!cur}).eq('id',uid);
+    setUsers(us=>us.map(u=>u.id===uid?{...u,is_admin:!cur}:u));
+  };
 
-        {loading ? (
-          <div style={{textAlign:'center',padding:60}}><span className="spinner" style={{margin:'0 auto',display:'block'}}/></div>
-        ) : rank.length===0 ? (
-          <div className="card" style={{textAlign:'center',padding:'40px 20px',marginBottom:12}}>
-            <div style={{fontSize:36,marginBottom:12}}>🏆</div>
-            <div style={{color:'rgba(255,255,255,.5)',fontSize:14}}>Ninguém no ranking ainda.<br/>Seja o primeiro a jogar!</div>
+  const addAdminByEmail=async()=>{
+    if(!newAdminEmail.trim()){setAdminMsg('Informe o email');return;}
+    // Find user by email via profiles username match (limited without service_role)
+    setAdminMsg('Para adicionar admin por email, use o SQL Editor do Supabase:\nUPDATE profiles SET is_admin=true WHERE id=(SELECT id FROM auth.users WHERE email=\''+newAdminEmail.trim()+'\');');
+  };
+
+  const opts=testQ?[{id:'a',txt:testQ.option_a},{id:'b',txt:testQ.option_b},{id:'c',txt:testQ.option_c},{id:'d',txt:testQ.option_d}].filter(o=>o.txt):[];
+
+  if(loading)return <div style={{height:'100vh',display:'flex',alignItems:'center',justifyContent:'center',background:'#002d3d'}}><span className="spinner"/></div>;
+
+  return(
+    <div style={{minHeight:'100%',background:'linear-gradient(180deg,#001c27 0%,#002d3d 100%)',paddingBottom:80}}>
+      <div style={{padding:'52px 20px 16px',maxWidth:480,margin:'0 auto'}}>
+        <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:16}}>
+          <div style={{width:36,height:36,borderRadius:10,background:'rgba(241,95,41,.2)',border:'1px solid rgba(241,95,41,.4)',display:'flex',alignItems:'center',justifyContent:'center'}}><IcShield s={18} c="#f15f29"/></div>
+          <div><div style={{color:'#f15f29',fontSize:11,fontWeight:800,textTransform:'uppercase',letterSpacing:1}}>Área Restrita</div><h1 style={{fontSize:18,fontWeight:900}}>Painel Admin</h1></div>
+        </div>
+
+        {/* Tabs */}
+        <div style={{display:'flex',background:'rgba(255,255,255,.07)',borderRadius:12,padding:3,marginBottom:18,gap:3}}>
+          {[{id:'stats',l:'📊 Stats'},{id:'test',l:'🎯 Testar'},{id:'users',l:'👥 Usuários'}].map(t=>(
+            <button key={t.id} onClick={()=>setTab(t.id)} style={{flex:1,padding:'8px 4px',border:'none',borderRadius:9,fontFamily:'Poppins',fontWeight:700,fontSize:11,cursor:'pointer',transition:'all .2s',background:tab===t.id?'rgba(241,95,41,.25)':'transparent',color:tab===t.id?'#f15f29':'rgba(255,255,255,.45)'}}>
+              {t.l}
+            </button>
+          ))}
+        </div>
+
+        {/* STATS TAB */}
+        {tab==='stats'&&stats&&(
+          <div style={{animation:'mqFadeUp .3s ease'}}>
+            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,marginBottom:12}}>
+              {[
+                {l:'Total usuários',v:stats.total_users,e:'👥'},
+                {l:'Responderam hoje',v:stats.answers_today,e:'📅'},
+                {l:'Acertos hoje',v:stats.correct_today,e:'✅'},
+                {l:'Total perguntas',v:stats.total_questions,e:'❓'},
+                {l:'Respostas totais',v:stats.total_answers_all_time,e:'📊'},
+                {l:'Taxa acerto hoje',v:stats.answers_today>0?Math.round((stats.correct_today/stats.answers_today)*100)+'%':'–',e:'🎯'},
+              ].map((s,i)=>(
+                <div key={i} className="card" style={{display:'flex',alignItems:'center',gap:10,background:'rgba(241,95,41,.07)',border:'1px solid rgba(241,95,41,.15)'}}>
+                  <span style={{fontSize:20}}>{s.e}</span>
+                  <div><div style={{color:'#fff',fontWeight:800,fontSize:18}}>{s.v}</div><div style={{color:'rgba(255,255,255,.36)',fontSize:10}}>{s.l}</div></div>
+                </div>
+              ))}
+            </div>
+            <div className="card" style={{background:'rgba(245,255,15,.06)',border:'1px solid rgba(245,255,15,.15)',textAlign:'center',padding:'16px'}}>
+              <div style={{color:'#F5FF0F',fontSize:10,fontWeight:800,textTransform:'uppercase',letterSpacing:1,marginBottom:4}}>Hoje em Brasília</div>
+              <div style={{color:'#fff',fontSize:15,fontWeight:700}}>{todayBrasilia()}</div>
+            </div>
           </div>
-        ) : (
-          <>
-            {/* Podium */}
-            {podium.length>=3&&(
-              <div style={{display:'flex',alignItems:'flex-end',justifyContent:'center',gap:6,paddingBottom:0,marginBottom:12}}>
-                {podiumOrder.map((p,i)=>(
-                  <div key={p.id} style={{textAlign:'center',width:100}}>
-                    <div style={{fontSize:i===1?28:20,marginBottom:i===1?0:4,animation:i===1?'mqFloat 2.5s ease-in-out infinite':'none'}}>{p.avatar_emoji||'😊'}</div>
-                    {i===1&&<div style={{fontSize:16,marginBottom:2}}>👑</div>}
-                    <div style={{color:'#fff',fontSize:10,fontWeight:700,marginBottom:5,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{p.username}</div>
-                    <div style={{height:podiumH[i],background:`linear-gradient(0deg,${podiumC[i]}33,${podiumC[i]}11)`,border:`2px solid ${podiumC[i]}`,borderRadius:'8px 8px 0 0',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:2}}>
-                      <div style={{color:podiumC[i],fontWeight:900,fontSize:14}}>{podiumLabel[i]}</div>
-                      <div style={{color:'#fff',fontSize:10,fontWeight:600}}>{(p.total_score||0).toLocaleString('pt-BR')}</div>
-                    </div>
+        )}
+
+        {/* TEST TAB */}
+        {tab==='test'&&(
+          <div style={{animation:'mqFadeUp .3s ease'}}>
+            <button className="btn-cta" onClick={loadTestQ} style={{marginBottom:16,background:'linear-gradient(135deg,#f15f29,#c0392b)'}}>
+              <IcRefresh s={16} c="#fff"/>Carregar pergunta aleatória
+            </button>
+            {testQ&&(
+              <div>
+                <div className="card" style={{marginBottom:12,background:'rgba(241,95,41,.07)',border:'1px solid rgba(241,95,41,.2)'}}>
+                  <div style={{color:'rgba(255,255,255,.4)',fontSize:10,fontWeight:700,textTransform:'uppercase',marginBottom:8}}>ID: {testQ.id}</div>
+                  <p style={{color:'#fff',fontSize:14,fontWeight:700,lineHeight:1.5}}>{testQ.question?.replace(/[\u200c\u200b\u200d\u00ad]/g,'').trim()}</p>
+                </div>
+                {opts.map(o=>{
+                  const isCorrect=o.id===testQ.answer_letter;
+                  const isSel=o.id===testSel;
+                  let cls='opt';
+                  if(testSel){if(isCorrect)cls='opt correct';else if(isSel)cls='opt wrong';else cls='opt dim';}
+                  return(
+                    <button key={o.id} className={cls} disabled={!!testSel} onClick={()=>setTestSel(o.id)}>
+                      <span style={{width:28,height:28,borderRadius:7,flexShrink:0,display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:800,background:testSel?(isCorrect?'#8dc63f':(isSel?'#f15f29':'rgba(255,255,255,.07)')):'rgba(255,255,255,.13)',color:'#fff'}}>
+                        {testSel&&isCorrect?<IcCheck s={13} c="#fff"/>:testSel&&isSel?<IcX s={13} c="#fff"/>:o.id.toUpperCase()}
+                      </span>
+                      <span style={{fontSize:13}}>{o.txt?.replace(/[\u200c\u200b\u200d\u00ad]/g,'').trim()}</span>
+                    </button>
+                  );
+                })}
+                {testSel&&(
+                  <div style={{background:'linear-gradient(135deg,#001c27,#002a38)',borderRadius:14,padding:'14px',border:'1px solid rgba(245,255,15,.2)',marginTop:4}}>
+                    <div style={{color:'#F5FF0F',fontSize:10,fontWeight:800,marginBottom:6}}>💡 Justificativa</div>
+                    {testQ.justification?<p style={{color:'rgba(255,255,255,.8)',fontSize:12.5,lineHeight:1.5}}>{testQ.justification}</p>:<p style={{color:'rgba(255,255,255,.4)',fontSize:12}}>Sem justificativa cadastrada.</p>}
+                    <YTButton url={testQ.youtube_url} isCorrect={testSel===testQ.answer_letter}/>
                   </div>
-                ))}
+                )}
               </div>
             )}
+          </div>
+        )}
 
-            {/* Rest of ranking */}
-            <div style={{padding:'4px 0'}}>
-              {rest.map((p,i)=>{
-                const isMe = p.id===myId;
-                return (
-                  <div key={p.id} className="card" style={{marginBottom:8,display:'flex',alignItems:'center',gap:12,border:isMe?'1.5px solid #8dc63f':'1px solid rgba(255,255,255,.08)',background:isMe?'rgba(141,198,63,.1)':'var(--card-bg)',animation:`mqFadeUp ${.15+i*.05}s ease`}}>
-                    <span style={{color:'rgba(255,255,255,.36)',fontWeight:800,fontSize:11,width:22,textAlign:'center'}}>#{p.position}</span>
-                    <span style={{fontSize:20}}>{p.avatar_emoji||'😊'}</span>
-                    <span style={{flex:1,color:isMe?'#8dc63f':'#fff',fontWeight:isMe?700:500,fontSize:13}}>{p.username}{isMe?' (Você)':''}</span>
-                    <span style={{color:'#F5FF0F',fontWeight:900,fontSize:14}}>{(p.total_score||0).toLocaleString('pt-BR')}</span>
-                  </div>
+        {/* USERS TAB */}
+        {tab==='users'&&(
+          <div style={{animation:'mqFadeUp .3s ease'}}>
+            <div className="card" style={{marginBottom:14,background:'rgba(0,144,193,.08)',border:'1px solid rgba(0,144,193,.2)'}}>
+              <div style={{color:'#0090C1',fontSize:11,fontWeight:800,textTransform:'uppercase',marginBottom:8}}>Adicionar Admin</div>
+              <div style={{fontSize:11,color:'rgba(255,255,255,.5)',marginBottom:10,lineHeight:1.5}}>Por segurança, use o SQL do Supabase para promover admins:</div>
+              <div style={{background:'rgba(0,0,0,.3)',borderRadius:8,padding:'10px 12px',fontFamily:'monospace',fontSize:11,color:'#8dc63f',lineHeight:1.5,wordBreak:'break-all'}}>
+                UPDATE profiles SET is_admin=true WHERE id=(<br/>
+                &nbsp;&nbsp;SELECT id FROM auth.users<br/>
+                &nbsp;&nbsp;WHERE email='EMAIL_AQUI'<br/>
                 );
-              })}
+              </div>
             </div>
-          </>
+            <div style={{color:'rgba(255,255,255,.4)',fontSize:11,fontWeight:700,textTransform:'uppercase',letterSpacing:1,marginBottom:10}}>Top usuários ({users.length})</div>
+            {users.map((u,i)=>(
+              <div key={u.id} className="card" style={{marginBottom:8,display:'flex',alignItems:'center',gap:10}}>
+                <span style={{color:'rgba(255,255,255,.3)',fontSize:11,fontWeight:700,width:18}}>#{i+1}</span>
+                <div style={{flex:1,minWidth:0}}>
+                  <div style={{color:'#fff',fontWeight:600,fontSize:13,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{u.username||'–'}</div>
+                  <div style={{color:'rgba(255,255,255,.35)',fontSize:10}}>{u.total_score||0} pts · {u.quizzes_played||0} respostas</div>
+                </div>
+                {u.is_admin&&<span style={{background:'rgba(241,95,41,.2)',border:'1px solid rgba(241,95,41,.4)',borderRadius:8,padding:'2px 8px',color:'#f15f29',fontSize:10,fontWeight:700}}>ADMIN</span>}
+                <button onClick={()=>toggleAdmin(u.id,u.is_admin)} style={{background:'none',border:`1px solid ${u.is_admin?'rgba(241,95,41,.4)':'rgba(255,255,255,.15)'}`,borderRadius:8,padding:'5px 10px',color:u.is_admin?'#f15f29':'rgba(255,255,255,.4)',fontFamily:'Poppins',fontSize:10,fontWeight:700,cursor:'pointer',transition:'all .2s',flexShrink:0}}>
+                  {u.is_admin?'Remover':'+ Admin'}
+                </button>
+              </div>
+            ))}
+          </div>
         )}
       </div>
     </div>
   );
 }
 
-/* ══════════════════════════════════════════
-   SCREEN: SETTINGS
-══════════════════════════════════════════ */
-function SettingsScreen({onLogout, go}) {
-  const [sound, setSound] = useState(true);
-  const [notif, setNotif] = useState(true);
-  const [daily, setDaily] = useState(false);
-  const [vibrate, setVibrate] = useState(true);
+/* ══ APP ROOT ══ */
+function App(){
+  const [session,setSession]=useState(null);
+  const [profile,setProfile]=useState(null);
+  const [screen,setScreen]=useState(()=>localStorage.getItem('mq_scr')||'dashboard');
+  const [authLoading,setAuthLoading]=useState(true);
+  const [toast,setToast]=useState(null);
+  const [tweaksVis,setTweaksVis]=useState(false);
+  const [dailyResult,setDailyResult]=useState(null);
+  const [dailyState,setDailyState]=useState({loading:true,question:null,answered:false,correct:false});
 
-  const Section = ({title, children}) => (
-    <div style={{padding:'0 20px',marginBottom:18,maxWidth:480,margin:'0 auto 18px'}}>
-      <div style={{color:'rgba(255,255,255,.32)',fontSize:10,fontWeight:800,textTransform:'uppercase',letterSpacing:1.5,marginBottom:8,paddingLeft:4}}>{title}</div>
-      <div style={{background:'rgba(255,255,255,.06)',borderRadius:16,overflow:'hidden',border:'1px solid rgba(255,255,255,.08)'}}>
-        {children}
-      </div>
-    </div>
-  );
+  const showToast=(msg,type='info')=>{setToast({msg,type});setTimeout(()=>setToast(null),3000);};
 
-  const Row = ({icon, label, right, last, onClick}) => (
-    <div onClick={onClick} style={{display:'flex',alignItems:'center',gap:13,padding:'15px 16px',cursor:onClick?'pointer':'default',borderBottom:last?'none':'1px solid rgba(255,255,255,.05)',transition:'background .15s'}}
-      onMouseEnter={e=>{if(onClick)e.currentTarget.style.background='rgba(255,255,255,.04)'}}
-      onMouseLeave={e=>{if(onClick)e.currentTarget.style.background='transparent'}}>
-      <span style={{fontSize:18,flexShrink:0}}>{icon}</span>
-      <span style={{flex:1,color:'#fff',fontSize:14,fontWeight:500}}>{label}</span>
-      {right}
-    </div>
-  );
-
-  return (
-    <div style={{minHeight:'100%',background:'linear-gradient(180deg,#004060 0%,#003e52 30%,#002233 100%)',paddingBottom:80}}>
-      <div style={{padding:'52px 20px 20px',maxWidth:480,margin:'0 auto'}}>
-        <button onClick={()=>go('profile')} style={{background:'none',border:'none',color:'rgba(255,255,255,.5)',cursor:'pointer',fontFamily:'Poppins',fontSize:13,fontWeight:600,display:'flex',alignItems:'center',gap:6,marginBottom:12,padding:0}}>
-          ← Voltar
-        </button>
-        <h1 style={{fontSize:22,fontWeight:900}}>Configurações</h1>
-      </div>
-
-      <Section title="Notificações">
-        <Row icon="🔔" label="Notificações push" right={<Toggle val={notif} set={setNotif}/>}/>
-        <Row icon="⏰" label="Lembrete diário" right={<Toggle val={daily} set={setDaily}/>} last/>
-      </Section>
-
-      <Section title="Preferências">
-        <Row icon="🔊" label="Sons do jogo" right={<Toggle val={sound} set={setSound}/>}/>
-        <Row icon="📳" label="Vibração" right={<Toggle val={vibrate} set={setVibrate}/>} last/>
-      </Section>
-
-      <Section title="Conta">
-        <Row icon="🔒" label="Alterar senha" right={<span style={{color:'rgba(255,255,255,.28)',fontSize:13}}>→</span>} onClick={async()=>{
-          const email = prompt('Informe seu email para receber o link:');
-          if(email){ await sb.auth.resetPasswordForEmail(email); alert('Email de redefinição enviado!'); }
-        }}/>
-        <Row icon="📄" label="Termos de uso" right={<span style={{color:'rgba(255,255,255,.28)',fontSize:13}}>→</span>} last onClick={()=>{}}/>
-      </Section>
-
-      <Section title="Sobre">
-        <Row icon="ℹ️" label="Versão do app" right={<span style={{color:'rgba(255,255,255,.28)',fontSize:12,fontWeight:600}}>1.0.0</span>}/>
-        <Row icon="⚡" label="Momento QUIZ" right={<span style={{color:'#8dc63f',fontSize:11,fontWeight:700}}>MVP</span>} last/>
-      </Section>
-
-      <div style={{padding:'0 20px',maxWidth:480,margin:'0 auto'}}>
-        <button onClick={onLogout} style={{width:'100%',padding:'16px',background:'rgba(241,95,41,.12)',border:'1.5px solid rgba(241,95,41,.32)',borderRadius:16,color:'#f15f29',fontFamily:'Poppins',fontWeight:800,fontSize:14,cursor:'pointer',transition:'all .2s'}}
-          onMouseEnter={e=>e.currentTarget.style.background='rgba(241,95,41,.22)'}
-          onMouseLeave={e=>e.currentTarget.style.background='rgba(241,95,41,.12)'}>
-          🚪 Sair da Conta
-        </button>
-      </div>
-    </div>
-  );
-}
-
-/* ══════════════════════════════════════════
-   SCREEN: PROFILE
-══════════════════════════════════════════ */
-function ProfileScreen({session, profile, onLogout, go}) {
-  const name = profile?.username || session?.user?.user_metadata?.username || 'Jogador';
-  const email = session?.user?.email || '';
-  const xpCur = profile?.total_score || 0;
-  const level = Math.floor(xpCur/500)+1;
-  const xpNext = level*500;
-  const xpPct = Math.min(100,Math.round(((xpCur-(level-1)*500)/(500))*100));
-
-  return (
-    <div style={{minHeight:'100%',background:'linear-gradient(180deg,#004060 0%,#003e52 40%,#002233 100%)',paddingBottom:80}}>
-      <div style={{background:'linear-gradient(180deg,#004d65,transparent)',padding:'52px 20px 24px',textAlign:'center',maxWidth:480,margin:'0 auto'}}>
-        <div style={{position:'relative',display:'inline-block',marginBottom:12}}>
-          <div style={{width:80,height:80,borderRadius:40,background:'linear-gradient(135deg,#8dc63f,#0090C1)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:36,boxShadow:'0 0 0 4px rgba(141,198,63,.2)',animation:'mqFloat 3s ease-in-out infinite'}}>
-            {profile?.avatar_emoji||'😎'}
-          </div>
-        </div>
-        <div style={{color:'#fff',fontSize:19,fontWeight:800}}>{name}</div>
-        <div style={{color:'rgba(255,255,255,.38)',fontSize:12,marginTop:2}}>{email}</div>
-        <div style={{display:'flex',alignItems:'center',justifyContent:'center',gap:8,marginTop:10}}>
-          <span className="pill">⭐ Nível {level}</span>
-        </div>
-        <div style={{marginTop:14}}>
-          <div style={{display:'flex',justifyContent:'space-between',marginBottom:4}}>
-            <span style={{color:'rgba(255,255,255,.38)',fontSize:10}}>XP para Nível {level+1}</span>
-            <span style={{color:'#F5FF0F',fontSize:10,fontWeight:700}}>{xpCur} / {xpNext}</span>
-          </div>
-          <div className="progress-bar"><div className="progress-fill" style={{width:`${xpPct}%`}}/></div>
-        </div>
-      </div>
-
-      <div style={{padding:'0 20px',maxWidth:480,margin:'0 auto'}}>
-        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,marginBottom:20}}>
-          {[
-            {l:'Total de Pontos',v:(xpCur).toLocaleString('pt-BR'),e:'⚡'},
-            {l:'Quizzes',v:profile?.quizzes_played||0,e:'🎯'},
-            {l:'Melhor Streak',v:`${profile?.best_streak||0}×`,e:'🔥'},
-            {l:'Nível Atual',v:level,e:'🏆'},
-          ].map((s,i)=>(
-            <div key={i} className="card" style={{display:'flex',alignItems:'center',gap:10,animation:`mqFadeUp ${.3+i*.07}s ease`}}>
-              <span style={{fontSize:22}}>{s.e}</span>
-              <div>
-                <div style={{color:'#fff',fontWeight:800,fontSize:16}}>{s.v}</div>
-                <div style={{color:'rgba(255,255,255,.36)',fontSize:10}}>{s.l}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <button onClick={()=>go('settings')} className="btn-ghost" style={{marginBottom:10}}>
-          ⚙️ Configurações
-        </button>
-        <button onClick={onLogout} style={{width:'100%',padding:'16px',background:'rgba(241,95,41,.12)',border:'1.5px solid rgba(241,95,41,.32)',borderRadius:16,color:'#f15f29',fontFamily:'Poppins',fontWeight:800,fontSize:14,cursor:'pointer',transition:'all .2s'}}
-          onMouseEnter={e=>e.currentTarget.style.background='rgba(241,95,41,.22)'}
-          onMouseLeave={e=>e.currentTarget.style.background='rgba(241,95,41,.12)'}>
-          🚪 Sair da Conta
-        </button>
-      </div>
-    </div>
-  );
-}
-
-/* ══════════════════════════════════════════
-   APP ROOT
-══════════════════════════════════════════ */
-function App() {
-  const [session, setSession] = useState(null);
-  const [profile, setProfile] = useState(null);
-  const [screen, setScreen] = useState(()=>localStorage.getItem('mq_scr')||'dashboard');
-  const [quizScores, setQuizScores] = useState([]);
-  const [quizQuestions, setQuizQuestions] = useState([]);
-  const [authLoading, setAuthLoading] = useState(true);
-  const [toast, setToast] = useState(null);
-  const [tweaksVis, setTweaksVis] = useState(false);
-
-  const showToast = (msg, type='info') => {
-    setToast({msg,type});
-    setTimeout(()=>setToast(null), 3000);
+  const loadProfile=async(uid)=>{
+    try{
+      const {data}=await sb.from('profiles').select('*').eq('id',uid).single();
+      if(data){
+        const {data:rd}=await sb.from('ranking').select('position').eq('id',uid).single();
+        setProfile({...data,ranking_pos:rd?.position||null});
+        return data;
+      }
+    }catch(e){console.error(e);}
   };
 
-  const loadProfile = async (userId) => {
-    try {
-      const {data} = await sb.from('profiles').select('*').eq('id',userId).single();
-      if (data) {
-        // Get ranking position
-        const {data:rankData} = await sb.from('ranking').select('position').eq('id',userId).single();
-        setProfile({...data, ranking_pos: rankData?.position||null});
-      }
-    } catch(e) { console.error('Profile load error:', e); }
+  const loadDailyState=async(uid)=>{
+    try{
+      const today=todayBrasilia();
+      // Get today's scheduled question
+      const {data:sched}=await sb.from('daily_schedule')
+        .select('question_id,questions(*)')
+        .eq('date',today).single();
+      if(!sched){setDailyState({loading:false,question:null,answered:false,correct:false});return;}
+      const question=sched.questions;
+      // Check if user already answered today
+      const {data:ans}=await sb.from('daily_answers')
+        .select('is_correct').eq('user_id',uid).eq('date',today).single();
+      setDailyState({loading:false,question,answered:!!ans,correct:ans?.is_correct||false});
+    }catch(e){
+      console.error(e);
+      setDailyState({loading:false,question:null,answered:false,correct:false});
+    }
   };
 
   useEffect(()=>{
     sb.auth.getSession().then(({data:{session}})=>{
       setSession(session);
-      if(session) loadProfile(session.user.id);
+      if(session){loadProfile(session.user.id);loadDailyState(session.user.id);}
       setAuthLoading(false);
     });
-    const {data:{subscription}} = sb.auth.onAuthStateChange((_event,session)=>{
+    const {data:{subscription}}=sb.auth.onAuthStateChange((_,session)=>{
       setSession(session);
-      if(session) loadProfile(session.user.id);
-      else setProfile(null);
+      if(session){loadProfile(session.user.id);loadDailyState(session.user.id);}
+      else{setProfile(null);setDailyState({loading:false,question:null,answered:false,correct:false});}
     });
     return()=>subscription.unsubscribe();
   },[]);
 
-  useEffect(()=>{ localStorage.setItem('mq_scr',screen); },[screen]);
+  useEffect(()=>{localStorage.setItem('mq_scr',screen);},[screen]);
 
   // Tweaks
   useEffect(()=>{
     const h=e=>{
-      if(e.data?.type==='__activate_edit_mode') setTweaksVis(true);
-      if(e.data?.type==='__deactivate_edit_mode') setTweaksVis(false);
+      if(e.data?.type==='__activate_edit_mode')setTweaksVis(true);
+      if(e.data?.type==='__deactivate_edit_mode')setTweaksVis(false);
     };
     window.addEventListener('message',h);
     window.parent.postMessage({type:'__edit_mode_available'},'*');
     return()=>window.removeEventListener('message',h);
   },[]);
 
-  const go = s => setScreen(s);
-  const handleLogout = async () => {
-    await sb.auth.signOut();
-    setSession(null); setProfile(null); setScreen('dashboard');
-    showToast('Até logo! 👋','info');
-  };
+  const go=s=>setScreen(s);
+  const handleLogout=async()=>{await sb.auth.signOut();setSession(null);setProfile(null);setScreen('dashboard');showToast('Até logo! 👋');};
 
-  if (authLoading) return (
+  if(authLoading)return(
     <div style={{height:'100vh',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',background:'#003e52',gap:16}}>
-      <div style={{width:56,height:56,borderRadius:18,background:'linear-gradient(135deg,#8dc63f,#0090C1)',display:'flex',alignItems:'center',justifyContent:'center',animation:'mqFloat 2s ease-in-out infinite'}}>
-        <IcZap s={26}/>
-      </div>
+      <div style={{width:56,height:56,borderRadius:18,background:'linear-gradient(135deg,#8dc63f,#0090C1)',display:'flex',alignItems:'center',justifyContent:'center',animation:'mqFloat 2s ease-in-out infinite'}}><IcZap s={26}/></div>
       <span className="spinner"/>
     </div>
   );
 
-  if (!session) return (
+  if(!session)return(
     <>
-      {toast && <Toast msg={toast.msg} type={toast.type}/>}
-      <LoginScreen onLogin={u=>{ setSession({user:u}); loadProfile(u.id); go('dashboard'); showToast('Bem-vindo ao Momento QUIZ! 🎉','success'); }}/>
+      {toast&&<Toast msg={toast.msg} type={toast.type}/>}
+      <LoginScreen onLogin={u=>{setSession({user:u});loadProfile(u.id);loadDailyState(u.id);go('dashboard');showToast('Bem-vindo ao Momento QUIZ! 🎉','success');}}/>
     </>
   );
 
-  const navScreens = ['dashboard','history','ranking','profile'];
+  const navScreens=['dashboard','history','ranking','profile','admin'];
+  const isAdmin=profile?.is_admin||false;
 
-  return (
+  return(
     <div className="app-shell">
-      {toast && <Toast msg={toast.msg} type={toast.type}/>}
-
+      {toast&&<Toast msg={toast.msg} type={toast.type}/>}
       <div className="app-main">
-        {screen==='dashboard' && <div className="page"><DashboardScreen go={go} startQuiz={()=>go('quiz')} profile={profile} session={session}/></div>}
-        {screen==='quiz' && <div className="page"><QuizScreen onFinish={(s,q)=>{setQuizScores(s);setQuizQuestions(q);go('result');loadProfile(session.user.id);}} session={session}/></div>}
-        {screen==='result' && <div className="page"><ResultScreen scores={quizScores} questions={quizQuestions} onAgain={()=>go('quiz')} onHome={()=>go('dashboard')}/></div>}
-        {screen==='history' && <div className="page"><HistoryScreen session={session}/></div>}
-        {screen==='ranking' && <div className="page"><RankingScreen session={session}/></div>}
-        {screen==='profile' && <div className="page"><ProfileScreen session={session} profile={profile} onLogout={handleLogout} go={go}/></div>}
-        {screen==='settings' && <div className="page"><SettingsScreen onLogout={handleLogout} go={go}/></div>}
+        {screen==='dashboard'&&<div className="page"><DashboardScreen go={go} session={session} profile={profile} dailyState={dailyState}/></div>}
+        {screen==='quiz'&&<div className="page"><QuizScreen onFinish={r=>{setDailyResult(r);setDailyState(p=>({...p,answered:true,correct:r.correct}));loadProfile(session.user.id);go('result');}} session={session} dailyState={dailyState}/></div>}
+        {screen==='result'&&<div className="page"><ResultScreen result={dailyResult} onHome={go}/></div>}
+        {screen==='history'&&<div className="page"><HistoryScreen session={session}/></div>}
+        {screen==='ranking'&&<div className="page"><RankingScreen session={session}/></div>}
+        {screen==='profile'&&<div className="page"><ProfileScreen session={session} profile={profile} onLogout={handleLogout} go={go}/></div>}
+        {screen==='settings'&&<div className="page"><SettingsScreen onLogout={handleLogout} go={go}/></div>}
+        {screen==='admin'&&isAdmin&&<div className="page"><AdminScreen session={session} go={go}/></div>}
+        {screen==='admin'&&!isAdmin&&<div className="page" style={{display:'flex',alignItems:'center',justifyContent:'center',minHeight:'100vh',background:'#002d3d',flexDirection:'column',gap:12,padding:24,textAlign:'center'}}><IcShield s={48} c="rgba(255,255,255,.2)"/><p style={{color:'rgba(255,255,255,.4)',fontSize:14}}>Acesso restrito a administradores.</p><button className="btn-ghost" style={{maxWidth:200}} onClick={()=>go('dashboard')}>← Voltar</button></div>}
       </div>
+      {navScreens.includes(screen)&&<BNav cur={screen} go={go} isAdmin={isAdmin}/>}
 
-      {navScreens.includes(screen) && <BNav cur={screen} go={go}/>}
-
-      {/* TWEAKS */}
       {tweaksVis&&(
-        <div style={{position:'fixed',bottom:24,right:24,background:'#0e1c23',border:'1px solid rgba(255,255,255,.12)',borderRadius:16,padding:18,width:220,boxShadow:'0 24px 60px rgba(0,0,0,.6)',zIndex:9999,fontFamily:'Poppins',animation:'mqFadeUp .3s ease'}}>
-          <div style={{fontWeight:800,fontSize:13,marginBottom:14,color:'#8dc63f'}}>⚙️ Tweaks</div>
-          <div style={{fontSize:10.5,color:'rgba(255,255,255,.4)',marginBottom:10}}>Navegar para tela:</div>
-          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:5}}>
-            {['dashboard','quiz','result','history','ranking','profile'].map(s=>(
-              <button key={s} onClick={()=>go(s)} style={{background:screen===s?'rgba(141,198,63,.2)':'rgba(255,255,255,.06)',border:`1px solid ${screen===s?'#8dc63f':'transparent'}`,borderRadius:7,color:screen===s?'#8dc63f':'rgba(255,255,255,.5)',fontFamily:'Poppins',fontSize:9.5,fontWeight:700,padding:'6px 4px',cursor:'pointer',textTransform:'capitalize'}}>{s}</button>
+        <div style={{position:'fixed',bottom:24,right:24,background:'#0e1c23',border:'1px solid rgba(255,255,255,.12)',borderRadius:16,padding:18,width:200,boxShadow:'0 24px 60px rgba(0,0,0,.6)',zIndex:9999,fontFamily:'Poppins',animation:'mqFadeUp .3s ease'}}>
+          <div style={{fontWeight:800,fontSize:13,marginBottom:12,color:'#8dc63f'}}>⚙️ Tweaks</div>
+          <div style={{fontSize:10,color:'rgba(255,255,255,.4)',marginBottom:8}}>Navegar:</div>
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:4}}>
+            {['dashboard','quiz','result','history','ranking','profile','admin','settings'].map(s=>(
+              <button key={s} onClick={()=>go(s)} style={{background:screen===s?'rgba(141,198,63,.2)':'rgba(255,255,255,.06)',border:`1px solid ${screen===s?'#8dc63f':'transparent'}`,borderRadius:7,color:screen===s?'#8dc63f':'rgba(255,255,255,.5)',fontFamily:'Poppins',fontSize:9,fontWeight:700,padding:'5px 3px',cursor:'pointer',textTransform:'capitalize'}}>{s}</button>
             ))}
           </div>
         </div>
