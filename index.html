@@ -672,18 +672,73 @@ function ResultScreen({result,onHome,session,onFeedback}){
   );
 }
 
+/* ══ HISTORY DETAIL MODAL ══ */
+function HistoryDetail({item, onClose}){
+  if(!item)return null;
+  const q=item.questions;
+  const opts=[{id:'a',txt:q?.option_a},{id:'b',txt:q?.option_b},{id:'c',txt:q?.option_c},{id:'d',txt:q?.option_d}].filter(o=>o.txt);
+  const chosen=item.chosen_letter;
+  const correct=q?.answer_letter;
+  return(
+    <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,.85)',zIndex:9000,display:'flex',alignItems:'flex-end',justifyContent:'center'}} onClick={onClose}>
+      <div style={{background:'linear-gradient(180deg,#002d3d,#001c27)',borderRadius:'24px 24px 0 0',padding:'24px 20px 40px',width:'100%',maxWidth:480,maxHeight:'90vh',overflowY:'auto',animation:'mqSlideUp .3s ease'}} onClick={e=>e.stopPropagation()}>
+        {/* Handle */}
+        <div style={{width:40,height:4,borderRadius:2,background:'rgba(255,255,255,.2)',margin:'0 auto 20px'}}/>
+        {/* Date + result */}
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16}}>
+          <span style={{color:'rgba(255,255,255,.4)',fontSize:12}}>{new Date(item.answered_at).toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'})}</span>
+          <span style={{color:item.is_correct?'#8dc63f':'#f15f29',fontWeight:800,fontSize:13}}>{item.is_correct?`✅ +${parseFloat(item.score||0).toFixed(2)} pts`:'❌ Errou'}</span>
+        </div>
+        {/* Question */}
+        <p style={{color:'#fff',fontSize:15,fontWeight:700,lineHeight:1.55,marginBottom:16}}>
+          {q?.question?.replace(/[\u200c\u200b\u200d\u00ad]/g,'').trim()}
+        </p>
+        {/* Options */}
+        {opts.map(o=>{
+          const isCorrect=o.id===correct;
+          const isChosen=o.id===chosen;
+          let bg='rgba(255,255,255,.06)';
+          let border='rgba(255,255,255,.1)';
+          let col='rgba(255,255,255,.55)';
+          if(isCorrect){bg='rgba(141,198,63,.18)';border='#8dc63f';col='#fff';}
+          else if(isChosen&&!isCorrect){bg='rgba(241,95,41,.18)';border='#f15f29';col='#fff';}
+          return(
+            <div key={o.id} style={{display:'flex',alignItems:'center',gap:11,padding:'13px 14px',borderRadius:14,border:`2px solid ${border}`,background:bg,marginBottom:8}}>
+              <span style={{width:28,height:28,borderRadius:8,flexShrink:0,display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:800,background:isCorrect?'#8dc63f':(isChosen?'#f15f29':'rgba(255,255,255,.1)'),color:'#fff'}}>
+                {isCorrect?<IcCheck s={13} c="#fff"/>:isChosen?<IcX s={13} c="#fff"/>:o.id.toUpperCase()}
+              </span>
+              <span style={{color:col,fontSize:13,lineHeight:1.3}}>{o.txt?.replace(/[\u200c\u200b\u200d\u00ad]/g,'').trim()}</span>
+            </div>
+          );
+        })}
+        {/* Justification */}
+        {q?.justification&&(
+          <div style={{marginTop:12,background:'rgba(245,255,15,.07)',border:'1px solid rgba(245,255,15,.18)',borderRadius:14,padding:'13px 14px'}}>
+            <div style={{color:'#F5FF0F',fontSize:10,fontWeight:800,letterSpacing:.8,marginBottom:5}}>💡 SABIA QUE...</div>
+            <p style={{color:'rgba(255,255,255,.78)',fontSize:13,lineHeight:1.55}}>{q.justification}</p>
+          </div>
+        )}
+        <YTButton url={q?.youtube_url} isCorrect={item.is_correct}/>
+        <button onClick={onClose} className="btn-ghost" style={{marginTop:16}}>Fechar</button>
+      </div>
+    </div>
+  );
+}
+
 /* ══ SCREEN: HISTORY ══ */
 function HistoryScreen({session}){
   const [hist,setHist]=useState([]);
   const [loading,setLoading]=useState(true);
+  const [detail,setDetail]=useState(null);
+
   useEffect(()=>{
     window.track('page_view',{page:'history'});
     const load=async()=>{
       try{
         const {data}=await sb.from('daily_answers')
-          .select('*,questions(question,answer_letter,youtube_url)')
+          .select('*,questions(id,question,option_a,option_b,option_c,option_d,answer_letter,justification,youtube_url)')
           .eq('user_id',session?.user?.id)
-          .order('answered_at',{ascending:false}).limit(30);
+          .order('answered_at',{ascending:false}).limit(60);
         setHist(data||[]);
       }finally{setLoading(false);}
     };
@@ -697,26 +752,30 @@ function HistoryScreen({session}){
       <BetaBanner/>
       <div style={{padding:'20px 20px 16px',maxWidth:480,margin:'0 auto'}}>
         <h1 style={{fontSize:22,fontWeight:900}}>Meu Histórico</h1>
-        <p style={{color:'rgba(255,255,255,.42)',fontSize:13,marginTop:3}}>Suas respostas diárias</p>
+        <p style={{color:'rgba(255,255,255,.42)',fontSize:13,marginTop:3}}>Toque em qualquer quiz para ver os detalhes</p>
       </div>
       <div style={{padding:'0 20px',maxWidth:480,margin:'0 auto'}}>
         {loading?<div style={{textAlign:'center',padding:40}}><span className="spinner" style={{margin:'0 auto',display:'block'}}/></div>
         :hist.length===0?<div className="card" style={{textAlign:'center',padding:'40px 20px'}}><div style={{fontSize:36,marginBottom:12}}>🎯</div><div style={{color:'rgba(255,255,255,.5)',fontSize:14}}>Nenhuma resposta ainda.</div></div>
         :hist.map((h,i)=>(
-          <div key={h.id} className="card" style={{marginBottom:10,display:'flex',alignItems:'flex-start',gap:12,animation:`mqFadeUp ${.2+i*.04}s ease`}}>
+          <div key={h.id} className="card" onClick={()=>setDetail(h)} style={{marginBottom:10,display:'flex',alignItems:'flex-start',gap:12,cursor:'pointer',transition:'background .18s,transform .15s',animation:`mqFadeUp ${.2+i*.04}s ease'`}}
+            onMouseEnter={e=>{e.currentTarget.style.background='rgba(255,255,255,.11)';e.currentTarget.style.transform='scale(1.01)'}}
+            onMouseLeave={e=>{e.currentTarget.style.background='rgba(255,255,255,.07)';e.currentTarget.style.transform='scale(1)'}}>
             <span style={{fontSize:24,flexShrink:0,marginTop:2}}>{h.is_correct?'✅':'❌'}</span>
             <div style={{flex:1,minWidth:0}}>
               <div style={{color:'#fff',fontWeight:600,fontSize:13,lineHeight:1.4,marginBottom:4}}>
-                {h.questions?.question?.replace(/[\u200c\u200b\u200d\u00ad]/g,'').trim()?.substring(0,80)}...
+                {h.questions?.question?.replace(/[\u200c\u200b\u200d\u00ad]/g,'').trim()?.substring(0,70)}…
               </div>
               <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
                 <span style={{color:'rgba(255,255,255,.36)',fontSize:10}}>{fmt(h.answered_at)}</span>
                 <span style={{color:h.is_correct?'#8dc63f':'#f15f29',fontWeight:800,fontSize:12}}>{h.is_correct?`+${parseFloat(h.score||0).toFixed(2)} pts`:'Errou'}</span>
               </div>
             </div>
+            <span style={{color:'rgba(255,255,255,.2)',fontSize:16,alignSelf:'center'}}>›</span>
           </div>
         ))}
       </div>
+      {detail&&<HistoryDetail item={detail} onClose={()=>setDetail(null)}/>}
     </div>
   );
 }
@@ -725,9 +784,27 @@ function HistoryScreen({session}){
 function RankingScreen({session}){
   const [rank,setRank]=useState([]);
   const [loading,setLoading]=useState(true);
+  const [err,setErr]=useState('');
   useEffect(()=>{
     window.track('page_view',{page:'ranking'});
-    sb.from('ranking').select('*').limit(50).then(({data})=>{setRank(data||[]);setLoading(false);});
+    const load=async()=>{
+      try{
+        // Try ranking view first, fallback to profiles direct query
+        const {data,error}=await sb.from('ranking').select('*').limit(50);
+        if(!error&&data&&data.length>0){
+          setRank(data);
+        }else{
+          const {data:fallback}=await sb.from('profiles')
+            .select('id,username,avatar_emoji,total_score,quizzes_played')
+            .gt('quizzes_played',0)
+            .order('total_score',{ascending:false})
+            .limit(50);
+          setRank((fallback||[]).map((p,i)=>({...p,position:i+1})));
+        }
+      }catch(e){setErr('Erro ao carregar ranking.');}
+      finally{setLoading(false);}
+    };
+    load();
   },[]);
   const myId=session?.user?.id;
   const podium=rank.slice(0,3),rest=rank.slice(3);
@@ -740,8 +817,10 @@ function RankingScreen({session}){
       <div style={{background:'linear-gradient(180deg,#004d65,transparent)',padding:'20px 20px 0',maxWidth:480,margin:'0 auto'}}>
         <div style={{color:'#fff',fontSize:22,fontWeight:900,marginBottom:20}}>🏆 Ranking Global</div>
         {loading?<div style={{textAlign:'center',padding:60}}><span className="spinner" style={{margin:'0 auto',display:'block'}}/></div>
+        :err?<div className="card" style={{textAlign:'center',padding:'24px',color:'#f15f29'}}>{err}</div>
         :rank.length===0?<div className="card" style={{textAlign:'center',padding:'40px 20px',marginBottom:12}}><div style={{fontSize:36,marginBottom:12}}>🏆</div><div style={{color:'rgba(255,255,255,.5)',fontSize:14}}>Seja o primeiro a jogar!</div></div>
         :<>
+          {/* Pódio — só mostra com 3+ usuários */}
           {podium.length>=3&&(
             <div style={{display:'flex',alignItems:'flex-end',justifyContent:'center',gap:6,marginBottom:12}}>
               {po.map((p,i)=>(
@@ -751,18 +830,20 @@ function RankingScreen({session}){
                   <div style={{color:'#fff',fontSize:10,fontWeight:700,marginBottom:5,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{p.username}</div>
                   <div style={{height:pH[i],background:`linear-gradient(0deg,${pC[i]}33,${pC[i]}11)`,border:`2px solid ${pC[i]}`,borderRadius:'8px 8px 0 0',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:2}}>
                     <div style={{color:pC[i],fontWeight:900,fontSize:14}}>{pL[i]}</div>
-                    <div style={{color:'#fff',fontSize:10}}>{parseFloat(p.total_score||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}</div>
+                    <div style={{color:'#fff',fontSize:10}}>{parseFloat(p.total_score||0).toFixed(2)}</div>
                   </div>
                 </div>
               ))}
             </div>
           )}
-          <div>
-            {rest.map((p,i)=>{
+          {/* Lista completa (inclui top 3 se < 3 usuários) */}
+          <div style={{paddingBottom:8}}>
+            {(podium.length<3?rank:rest).map((p,i)=>{
               const isMe=p.id===myId;
+              const pos=podium.length<3?i+1:p.position;
               return(
                 <div key={p.id} className="card" style={{marginBottom:8,display:'flex',alignItems:'center',gap:12,border:isMe?'1.5px solid #8dc63f':'1px solid rgba(255,255,255,.08)',background:isMe?'rgba(141,198,63,.1)':'rgba(255,255,255,.05)'}}>
-                  <span style={{color:'rgba(255,255,255,.36)',fontWeight:800,fontSize:11,width:22,textAlign:'center'}}>#{p.position}</span>
+                  <span style={{color:'rgba(255,255,255,.36)',fontWeight:800,fontSize:11,width:22,textAlign:'center'}}>#{pos}</span>
                   <span style={{fontSize:20}}>{p.avatar_emoji||'😊'}</span>
                   <span style={{flex:1,color:isMe?'#8dc63f':'#fff',fontWeight:isMe?700:500,fontSize:13}}>{p.username}{isMe?' (Você)':''}</span>
                   <span style={{color:'#F5FF0F',fontWeight:900,fontSize:12,fontVariantNumeric:'tabular-nums'}}>{parseFloat(p.total_score||0).toFixed(2)}</span>
