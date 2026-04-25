@@ -424,7 +424,6 @@ function DashboardScreen({go,session,profile,dailyState}){
           </div>
           <button onClick={()=>go('profile')} style={{width:46,height:46,borderRadius:23,background:'linear-gradient(135deg,#8dc63f,#0090C1)',border:'none',cursor:'pointer',fontSize:22,boxShadow:'0 4px 16px rgba(141,198,63,.3)'}}>😎</button>
         </div>
-
         <div style={{maxWidth:480,margin:'0 auto'}}>
           <div style={{background:'linear-gradient(135deg,#001c27,#002d3d)',borderRadius:20,padding:'18px 20px 16px',border:'1px solid rgba(245,255,15,.18)',position:'relative',overflow:'hidden',boxShadow:'0 8px 36px rgba(0,0,0,.35)'}}>
             <div style={{position:'absolute',right:-12,top:-12,fontSize:80,opacity:.05,lineHeight:1}}>⚡</div>
@@ -440,39 +439,64 @@ function DashboardScreen({go,session,profile,dailyState}){
       </div>
 
       <div style={{padding:'0 20px',maxWidth:480,margin:'0 auto'}}>
-        {/* Daily card — question is HIDDEN, just the CTA */}
+        {/* Daily card */}
         <div style={{marginBottom:14}}>
           {dLoading?(
             <div className="card" style={{textAlign:'center',padding:28}}><span className="spinner" style={{margin:'0 auto',display:'block'}}/></div>
           ):answered?(
             <div className="card" style={{background:'rgba(141,198,63,.08)',border:'1.5px solid rgba(141,198,63,.25)',padding:'20px'}}>
               <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:14}}>
-                <span style={{fontSize:32}}>{correct?'🏆':'💪'}</span>
+                <span style={{fontSize:32}}>🏆</span>
                 <div>
-                  <div style={{color:'#8dc63f',fontSize:11,fontWeight:800,textTransform:'uppercase',letterSpacing:1}}>Pergunta de Hoje</div>
-                  <div style={{color:'#fff',fontSize:14,fontWeight:700,marginTop:2}}>{correct?'Você acertou!':'Você respondeu hoje!'}</div>
+                  <div style={{color:'#8dc63f',fontSize:11,fontWeight:800,textTransform:'uppercase',letterSpacing:1}}>Quizzes de Hoje</div>
+                  <div style={{color:'#fff',fontSize:14,fontWeight:700,marginTop:2}}>
+                    Você completou {dailyState.answeredSlots?.length||0} de {dailyState.totalSlots||1} quiz{(dailyState.totalSlots||1)>1?'zes':''}!
+                  </div>
                 </div>
               </div>
+              {/* Slot progress dots */}
+              {(dailyState.totalSlots||1)>1&&(
+                <div style={{display:'flex',gap:6,marginBottom:14}}>
+                  {Array.from({length:dailyState.totalSlots||1},(_,i)=>(
+                    <div key={i} style={{flex:1,height:6,borderRadius:3,background:(dailyState.answeredSlots||[]).includes(i+1)?'#8dc63f':'rgba(255,255,255,.15)'}}/>
+                  ))}
+                </div>
+              )}
               <div style={{background:'rgba(0,0,0,.2)',borderRadius:10,padding:'10px 12px',marginBottom:14}}>
-                <div style={{color:'rgba(255,255,255,.5)',fontSize:11,marginBottom:4}}>Nova pergunta em</div>
+                <div style={{color:'rgba(255,255,255,.5)',fontSize:11,marginBottom:4}}>Próximo quiz em</div>
                 <div style={{color:'#F5FF0F',fontSize:22,fontWeight:900,fontVariantNumeric:'tabular-nums',letterSpacing:2}}>{countdown}</div>
               </div>
               <button className="btn-cta" onClick={()=>go('ranking')} style={{fontSize:13}}>
                 <IcTrophy s={16} c="#fff"/>Ver ranking
               </button>
             </div>
-          ):(
-            /* Question EXISTS but is hidden — just show the CTA */
+          ):question?(
             <div style={{background:'linear-gradient(135deg,rgba(245,255,15,.06),rgba(0,144,193,.08))',borderRadius:20,padding:'24px 20px',border:'1px solid rgba(245,255,15,.2)',textAlign:'center',position:'relative',overflow:'hidden'}}>
               <div style={{position:'absolute',inset:0,background:'radial-gradient(ellipse at 50% 0%,rgba(245,255,15,.06),transparent 60%)',pointerEvents:'none'}}/>
-              <div style={{fontSize:48,marginBottom:8,animation:'mqFloat 3s ease-in-out infinite'}}>🎯</div>
-              <div style={{color:'#F5FF0F',fontSize:11,fontWeight:800,textTransform:'uppercase',letterSpacing:1.5,marginBottom:6}}>Pergunta de Hoje</div>
+              {/* Slot progress */}
+              {(dailyState.totalSlots||1)>1&&(
+                <div style={{display:'flex',gap:5,marginBottom:16}}>
+                  {Array.from({length:dailyState.totalSlots},(_,i)=>(
+                    <div key={i} style={{flex:1,height:5,borderRadius:3,background:(dailyState.answeredSlots||[]).includes(i+1)?'#8dc63f':i+1===dailyState.slot?'#F5FF0F':'rgba(255,255,255,.15)',transition:'background .3s'}}/>
+                  ))}
+                </div>
+              )}
+              <div style={{fontSize:44,marginBottom:8,animation:'mqFloat 3s ease-in-out infinite'}}>🎯</div>
+              <div style={{color:'#F5FF0F',fontSize:11,fontWeight:800,textTransform:'uppercase',letterSpacing:1.5,marginBottom:4}}>
+                {(dailyState.totalSlots||1)>1?`Quiz ${dailyState.slot} de ${dailyState.totalSlots}`:'Pergunta de Hoje'}
+              </div>
               <p style={{color:'rgba(255,255,255,.65)',fontSize:13,lineHeight:1.5,marginBottom:20}}>
-                Uma nova pergunta sobre saúde e ciência.<br/>Você tem <strong style={{color:'#fff'}}>30 segundos</strong> — quanto mais rápido, mais pontos!
+                Uma pergunta sobre saúde e ciência.<br/>Você tem <strong style={{color:'#fff'}}>30 segundos</strong> — quanto mais rápido, mais pontos!
               </p>
               <button className="btn-cta" onClick={startQuiz} style={{fontSize:15,padding:'17px',boxShadow:'0 8px 32px rgba(141,198,63,.4)'}}>
-                <IcZap s={18} c="#fff"/>Responder agora
+                <IcZap s={18} c="#fff"/>
+                {(dailyState.answeredSlots?.length||0)>0?'Próximo Quiz':'Responder agora'}
               </button>
+            </div>
+          ):(
+            <div className="card" style={{textAlign:'center',padding:'24px 16px'}}>
+              <div style={{fontSize:32,marginBottom:8}}>😴</div>
+              <div style={{color:'rgba(255,255,255,.5)',fontSize:13}}>Sem quiz agendado para hoje.</div>
             </div>
           )}
         </div>
@@ -505,7 +529,7 @@ function DashboardScreen({go,session,profile,dailyState}){
 
 /* ══ SCREEN: QUIZ ══ */
 function QuizScreen({onFinish,session,dailyState}){
-  const {question:q,loading:dLoading}=dailyState;
+  const {question:q,loading:dLoading,slot=1}=dailyState;
   const [sel,setSel]=useState(null);
   const [centis,setCentis]=useState(3000); // 30.00 seconds in centiseconds
   const [showTip,setShowTip]=useState(false);
@@ -548,6 +572,7 @@ function QuizScreen({onFinish,session,dailyState}){
         chosen_letter:id,
         is_correct:correct,
         score:finalPts,
+        slot,
       });
       const {data:prof}=await sb.from('profiles').select('total_score,quizzes_played').eq('id',session.user.id).single();
       if(prof){
@@ -946,16 +971,21 @@ function AdminScreen({session}){
   const [loading,setLoading]=useState(true);
   const [testQ,setTestQ]=useState(null);
   const [testSel,setTestSel]=useState(null);
+  const [quizCount,setQuizCount]=useState(1);
+  const [savingConfig,setSavingConfig]=useState(false);
+  const [configMsg,setConfigMsg]=useState('');
 
   useEffect(()=>{
     const load=async()=>{
       try{
-        const [{data:st},{data:us},{data:fb}]=await Promise.all([
+        const [{data:st},{data:us},{data:fb},{data:cfg}]=await Promise.all([
           sb.from('admin_stats').select('*').single(),
           sb.from('profiles').select('*').order('total_score',{ascending:false}).limit(50),
           sb.from('feedback_responses').select('*').order('answered_at',{ascending:false}).limit(100),
+          sb.from('app_settings').select('value').eq('key','daily_quiz_count').single(),
         ]);
         setStats(st);setUsers(us||[]);
+        setQuizCount(parseInt(cfg?.value||'1',10));
         if(fb){
           const liked=fb.filter(f=>f.liked_quiz===true).length;
           const total=fb.filter(f=>f.liked_quiz!==null).length;
@@ -969,6 +999,16 @@ function AdminScreen({session}){
     };
     load();
   },[]);
+
+  const saveQuizCount=async(val)=>{
+    setSavingConfig(true);setConfigMsg('');
+    try{
+      await sb.from('app_settings').upsert({key:'daily_quiz_count',value:String(val),updated_at:new Date().toISOString()});
+      setQuizCount(val);
+      setConfigMsg('✅ Salvo com sucesso!');
+    }catch(e){setConfigMsg('❌ Erro: '+e.message);}
+    finally{setSavingConfig(false);setTimeout(()=>setConfigMsg(''),3000);}
+  };
 
   const loadTestQ=async()=>{
     const {data}=await sb.from('questions').select('*').limit(322);
@@ -992,12 +1032,70 @@ function AdminScreen({session}){
           <div><div style={{color:'#f15f29',fontSize:11,fontWeight:800,textTransform:'uppercase',letterSpacing:1}}>Área Restrita</div><h1 style={{fontSize:18,fontWeight:900}}>Painel Admin</h1></div>
         </div>
         <div style={{display:'flex',background:'rgba(255,255,255,.07)',borderRadius:12,padding:3,marginBottom:18,gap:3}}>
-          {[{id:'stats',l:'📊 Stats'},{id:'feedback',l:'💬 Feedback'},{id:'test',l:'🎯 Testar'},{id:'users',l:'👥 Users'}].map(t=>(
+          {[{id:'stats',l:'📊 Stats'},{id:'feedback',l:'💬 Feedback'},{id:'config',l:'⚙️ Config'},{id:'test',l:'🎯 Testar'},{id:'users',l:'👥 Users'}].map(t=>(
             <button key={t.id} onClick={()=>setTab(t.id)} style={{flex:1,padding:'8px 3px',border:'none',borderRadius:9,fontFamily:'Poppins',fontWeight:700,fontSize:10,cursor:'pointer',background:tab===t.id?'rgba(241,95,41,.25)':'transparent',color:tab===t.id?'#f15f29':'rgba(255,255,255,.45)'}}>
               {t.l}
             </button>
           ))}
         </div>
+
+        {/* CONFIG */}
+        {tab==='config'&&(
+          <div style={{animation:'mqFadeUp .3s ease'}}>
+            <div className="card" style={{marginBottom:16,background:'rgba(241,95,41,.07)',border:'1px solid rgba(241,95,41,.2)'}}>
+              <div style={{color:'#f15f29',fontSize:11,fontWeight:800,textTransform:'uppercase',letterSpacing:1,marginBottom:14}}>Quizzes por Dia</div>
+              <p style={{color:'rgba(255,255,255,.55)',fontSize:12,lineHeight:1.5,marginBottom:18}}>
+                Define quantas perguntas os usuários respondem por dia (1 a 5). A mudança vale imediatamente para quem ainda não respondeu hoje.
+              </p>
+              {/* Visual selector 1-5 */}
+              <div style={{display:'flex',gap:8,marginBottom:18}}>
+                {[1,2,3,4,5].map(n=>(
+                  <button key={n} onClick={()=>setQuizCount(n)} style={{
+                    flex:1,aspectRatio:'1',border:`2px solid ${quizCount===n?'#f15f29':'rgba(255,255,255,.15)'}`,
+                    borderRadius:14,background:quizCount===n?'rgba(241,95,41,.25)':'rgba(255,255,255,.06)',
+                    color:quizCount===n?'#f15f29':'rgba(255,255,255,.5)',
+                    fontFamily:'Poppins',fontWeight:900,fontSize:22,cursor:'pointer',transition:'all .2s',
+                    display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:4,
+                    padding:'12px 0',
+                  }}>
+                    {n}
+                    <span style={{fontSize:9,fontWeight:600,color:quizCount===n?'rgba(241,95,41,.8)':'rgba(255,255,255,.3)'}}>
+                      quiz{n>1?'zes':''}
+                    </span>
+                  </button>
+                ))}
+              </div>
+              {/* Preview */}
+              <div style={{background:'rgba(0,0,0,.25)',borderRadius:10,padding:'12px 14px',marginBottom:14}}>
+                <div style={{color:'rgba(255,255,255,.4)',fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:.8,marginBottom:8}}>Preview — barra de progresso</div>
+                <div style={{display:'flex',gap:5}}>
+                  {Array.from({length:quizCount},(_,i)=>(
+                    <div key={i} style={{flex:1,height:6,borderRadius:3,background:i===0?'#8dc63f':'rgba(255,255,255,.15)'}}/>
+                  ))}
+                </div>
+                <div style={{color:'rgba(255,255,255,.35)',fontSize:11,marginTop:8}}>
+                  Usuário verá {quizCount} quiz{quizCount>1?'zes':''} por dia
+                </div>
+              </div>
+              <button onClick={()=>saveQuizCount(quizCount)} disabled={savingConfig} className="btn-cta" style={{background:'linear-gradient(135deg,#f15f29,#c0392b)',fontSize:14}}>
+                {savingConfig?<span className="spinner"/>:'💾 Salvar configuração'}
+              </button>
+              {configMsg&&<div style={{marginTop:10,color:configMsg.startsWith('✅')?'#8dc63f':'#f15f29',fontSize:12,fontWeight:600,textAlign:'center'}}>{configMsg}</div>}
+            </div>
+
+            <div className="card" style={{background:'rgba(0,144,193,.07)',border:'1px solid rgba(0,144,193,.2)'}}>
+              <div style={{color:'#0090C1',fontSize:11,fontWeight:800,textTransform:'uppercase',letterSpacing:1,marginBottom:8}}>Reset via SQL (para testes)</div>
+              <div style={{background:'rgba(0,0,0,.3)',borderRadius:8,padding:'10px 12px',fontFamily:'monospace',fontSize:10,color:'#8dc63f',lineHeight:1.7,wordBreak:'break-all'}}>
+                DELETE FROM daily_answers<br/>
+                WHERE user_id = (<br/>
+                &nbsp;&nbsp;SELECT id FROM auth.users<br/>
+                &nbsp;&nbsp;WHERE email = 'SEU@EMAIL'<br/>
+                ) AND date = (NOW() AT TIME ZONE<br/>
+                &nbsp;&nbsp;'America/Sao_Paulo')::date;
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* STATS */}
         {tab==='stats'&&stats&&(
@@ -1165,13 +1263,38 @@ function App(){
   const loadDailyState=async(uid)=>{
     try{
       const today=todayBrasilia();
-      const {data:sched}=await sb.from('daily_schedule').select('question_id,questions(*)').eq('date',today).single();
-      if(!sched){setDailyState({loading:false,question:null,answered:false,correct:false});return;}
-      const {data:ans}=await sb.from('daily_answers').select('is_correct').eq('user_id',uid).eq('date',today).single();
-      setDailyState({loading:false,question:sched.questions,answered:!!ans,correct:ans?.is_correct||false});
+      // Get daily quiz count setting
+      const {data:setting}=await sb.from('app_settings').select('value').eq('key','daily_quiz_count').single();
+      const quizCount=parseInt(setting?.value||'1',10);
+      // Get all scheduled slots for today (up to quizCount)
+      const {data:slots}=await sb.from('daily_schedule')
+        .select('slot,question_id,questions(*)')
+        .eq('date',today)
+        .lte('slot',quizCount)
+        .order('slot',{ascending:true});
+      if(!slots||slots.length===0){setDailyState({loading:false,question:null,answered:false,correct:false,quizCount,slot:1,totalSlots:0,answeredSlots:[]});return;}
+      // Get which slots user already answered today
+      const {data:answers}=await sb.from('daily_answers')
+        .select('slot,is_correct,score')
+        .eq('user_id',uid).eq('date',today);
+      const answeredSlots=(answers||[]).map(a=>a.slot);
+      // Find next unanswered slot
+      const nextSlot=slots.find(s=>!answeredSlots.includes(s.slot));
+      const allDone=!nextSlot;
+      const lastAnswer=answers?.[answers.length-1];
+      setDailyState({
+        loading:false,
+        question:nextSlot?.questions||null,
+        slot:nextSlot?.slot||quizCount,
+        answered:allDone,
+        correct:lastAnswer?.is_correct||false,
+        quizCount,
+        totalSlots:slots.length,
+        answeredSlots,
+      });
     }catch(e){
       console.error(e);
-      setDailyState({loading:false,question:null,answered:false,correct:false});
+      setDailyState({loading:false,question:null,answered:false,correct:false,quizCount:1,slot:1,totalSlots:0,answeredSlots:[]});
     }
   };
 
