@@ -5,6 +5,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Momento QUIZ</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<!-- Google Analytics — substitua G-XXXXXXXXXX pelo seu Measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+  window.dataLayer=window.dataLayer||[];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js',new Date());
+  gtag('config','G-XXXXXXXXXX');
+  // Helper global de tracking
+  window.track=function(event,params){
+    try{gtag('event',event,params||{});}catch(e){}
+  };
+</script>
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
@@ -14,7 +26,6 @@
 html,body{height:100%}
 body{font-family:'Poppins',sans-serif;background:#060e12;color:#fff;min-height:100vh}
 :root{--primary:#003e52;--green:#8dc63f;--yellow:#F5FF0F;--cyan:#0090C1;--orange:#f15f29;--max-w:480px}
-
 .app-shell{min-height:100vh;display:flex;flex-direction:column}
 .app-main{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .app-main::-webkit-scrollbar{display:none}
@@ -29,10 +40,10 @@ body{font-family:'Poppins',sans-serif;background:#060e12;color:#fff;min-height:1
 @keyframes mqSlideUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
 @keyframes mqSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 @keyframes mqFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-@keyframes mqCountdown{from{stroke-dashoffset:0}to{stroke-dashoffset:251}}
+@keyframes betaPulse{0%,100%{opacity:1}50%{opacity:.7}}
 
-.btn-cta{background:linear-gradient(135deg,#8dc63f 0%,#5fa020 50%,#0090C1 100%);background-size:200% 200%;color:#fff;border:none;border-radius:16px;padding:16px 24px;font-family:'Poppins',sans-serif;font-weight:800;font-size:15px;cursor:pointer;transition:transform .15s,box-shadow .15s,background-position .3s;box-shadow:0 6px 24px rgba(141,198,63,.35);width:100%;display:flex;align-items:center;justify-content:center;gap:10px}
-.btn-cta:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(141,198,63,.45);background-position:right center}
+.btn-cta{background:linear-gradient(135deg,#8dc63f 0%,#5fa020 50%,#0090C1 100%);background-size:200% 200%;color:#fff;border:none;border-radius:16px;padding:16px 24px;font-family:'Poppins',sans-serif;font-weight:800;font-size:15px;cursor:pointer;transition:transform .15s,box-shadow .15s;box-shadow:0 6px 24px rgba(141,198,63,.35);width:100%;display:flex;align-items:center;justify-content:center;gap:10px}
+.btn-cta:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(141,198,63,.45)}
 .btn-cta:active{transform:scale(.97)}
 .btn-cta:disabled{opacity:.6;cursor:not-allowed;transform:none}
 .btn-ghost{background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.16);border-radius:14px;padding:14px 24px;font-family:'Poppins',sans-serif;font-weight:700;font-size:14px;color:#fff;cursor:pointer;transition:all .2s;width:100%;display:flex;align-items:center;justify-content:center;gap:8px}
@@ -57,6 +68,7 @@ body{font-family:'Poppins',sans-serif;background:#060e12;color:#fff;min-height:1
 .bnav-btn{background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 16px;transition:transform .15s}
 .bnav-btn:active{transform:scale(.88)}
 .spinner{width:22px;height:22px;border-radius:50%;border:3px solid rgba(255,255,255,.2);border-top-color:#fff;animation:mqSpin .7s linear infinite}
+.beta-badge{background:linear-gradient(135deg,rgba(245,255,15,.15),rgba(0,144,193,.15));border-bottom:1px solid rgba(245,255,15,.2);padding:7px 16px;display:flex;align-items:center;justify-content:space-between;gap:10;position:sticky;top:0;z-index:50;backdrop-filter:blur(8px)}
 </style>
 </head>
 <body>
@@ -68,12 +80,14 @@ const SUPA_URL='https://iiljupzogoywbjqjsbft.supabase.co';
 const SUPA_KEY='sb_publishable_ylEPdfp7VbyyM2RqJdyGLQ_mwgVPdzR';
 const sb=supabase.createClient(SUPA_URL,SUPA_KEY);
 
-/* ── helpers ── */
+// ── Replace with your Google Forms feedback URL ──
+const FEEDBACK_URL='https://forms.gle/SUBSTITUA_PELO_SEU_LINK';
+
 function todayBrasilia(){
   return new Date().toLocaleDateString('en-CA',{timeZone:'America/Sao_Paulo'});
 }
 
-/* ── icons ── */
+/* ── ICONS ── */
 const IcHome=({s=20,c='currentColor'})=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>;
 const IcClock=({s=20,c='currentColor'})=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>;
 const IcTrophy=({s=20,c='currentColor'})=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M7 4h10v7a5 5 0 01-10 0V4z"/><path d="M4 4h3v5a3 3 0 01-3-3V4z"/><path d="M17 4h3v2a3 3 0 01-3 3V4z"/><line x1="12" y1="17" x2="12" y2="21"/><line x1="8" y1="21" x2="16" y2="21"/></svg>;
@@ -83,11 +97,10 @@ const IcX=({s=16,c='currentColor'})=><svg width={s} height={s} viewBox="0 0 24 2
 const IcArrow=({s=18,c='currentColor'})=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></svg>;
 const IcZap=({s=28,c='#fff'})=><svg width={s} height={s} viewBox="0 0 24 24" fill={c}><polygon points="13,2 3,14 12,14 11,22 21,10 12,10"/></svg>;
 const IcShield=({s=20,c='currentColor'})=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>;
-const IcStar=({s=20,c='currentColor'})=><svg width={s} height={s} viewBox="0 0 24 24" fill={c}><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>;
-const IcPlay=({s=20,c='currentColor'})=><svg width={s} height={s} viewBox="0 0 24 24" fill={c}><polygon points="5,3 19,12 5,21"/></svg>;
 const IcRefresh=({s=18,c='currentColor'})=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="23,4 23,10 17,10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>;
+const IcMsgSquare=({s=18,c='currentColor'})=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>;
 
-/* ── Confetti ── */
+/* ── CONFETTI ── */
 function Confetti({active}){
   const ref=useRef(null),raf=useRef(null);
   useEffect(()=>{
@@ -103,36 +116,57 @@ function Confetti({active}){
   return <canvas ref={ref} style={{position:'fixed',inset:0,width:'100%',height:'100%',pointerEvents:'none',zIndex:9999}}/>;
 }
 
-/* ── CircTimer ── */
-function CircTimer({t,total=30}){
-  const R=38,C=2*Math.PI*R,col=t>20?'#8dc63f':t>10?'#F5FF0F':'#f15f29';
+/* ── CENTISECOND TIMER ── */
+function CircTimer({centis, total=3000}){
+  const R=38,C=2*Math.PI*R;
+  const pct=centis/total;
+  const secs=centis/100;
+  const col=secs>20?'#8dc63f':secs>10?'#F5FF0F':'#f15f29';
+  const display=secs.toFixed(2);
   return(
     <div style={{position:'relative',width:90,height:90}}>
       <svg width="90" height="90" style={{transform:'rotate(-90deg)'}}>
         <circle cx="45" cy="45" r={R} fill="none" stroke="rgba(255,255,255,.1)" strokeWidth="6"/>
         <circle cx="45" cy="45" r={R} fill="none" stroke={col} strokeWidth="6" strokeLinecap="round"
-          strokeDasharray={C} strokeDashoffset={C*(1-t/total)} style={{transition:'stroke-dashoffset 1s linear,stroke .5s'}}/>
+          strokeDasharray={C} strokeDashoffset={C*(1-pct)} style={{transition:'stroke .5s'}}/>
       </svg>
       <div style={{position:'absolute',inset:0,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center'}}>
-        <span style={{color:col,fontSize:22,fontWeight:900,lineHeight:1,transition:'color .5s'}}>{t}</span>
+        <span style={{color:col,fontSize:15,fontWeight:900,lineHeight:1,letterSpacing:'-0.5px',transition:'color .5s',fontVariantNumeric:'tabular-nums'}}>{display}</span>
         <span style={{color:'rgba(255,255,255,.38)',fontSize:8,fontWeight:700,letterSpacing:1}}>SEG</span>
       </div>
     </div>
   );
 }
 
-/* ── Toggle ── */
+/* ── BETA BANNER ── */
+function BetaBanner(){
+  return(
+    <div className="beta-badge">
+      <div style={{display:'flex',alignItems:'center',gap:8}}>
+        <span style={{background:'rgba(245,255,15,.9)',color:'#003e52',fontSize:9,fontWeight:900,padding:'2px 7px',borderRadius:6,letterSpacing:.8,animation:'betaPulse 2s ease-in-out infinite'}}>BETA</span>
+        <span style={{color:'rgba(255,255,255,.6)',fontSize:11}}>Versão de testes — sua participação constrói o app</span>
+      </div>
+      <a href={FEEDBACK_URL} target="_blank" rel="noopener noreferrer"
+        onClick={()=>window.track('feedback_link_click',{location:'beta_banner'})}
+        style={{color:'#0090C1',fontSize:11,fontWeight:700,textDecoration:'none',flexShrink:0,display:'flex',alignItems:'center',gap:4}}>
+        <IcMsgSquare s={13} c="#0090C1"/>Feedback
+      </a>
+    </div>
+  );
+}
+
+/* ── TOAST ── */
+function Toast({msg,type='info'}){
+  const bg=type==='error'?'rgba(241,95,41,.95)':type==='success'?'rgba(141,198,63,.95)':'rgba(0,144,193,.95)';
+  return <div style={{position:'fixed',top:56,left:'50%',transform:'translateX(-50%)',background:bg,color:'#fff',borderRadius:12,padding:'12px 20px',fontWeight:700,fontSize:13,zIndex:99999,animation:'mqFadeUp .3s ease',boxShadow:'0 8px 30px rgba(0,0,0,.4)',whiteSpace:'nowrap',maxWidth:'90vw',textAlign:'center'}}>{msg}</div>;
+}
+
+/* ── TOGGLE ── */
 function Toggle({val,set}){
   return <div className="toggle-track" style={{background:val?'#8dc63f':'rgba(255,255,255,.18)'}} onClick={()=>set(!val)}><div className="toggle-thumb" style={{left:val?23:3}}/></div>;
 }
 
-/* ── Toast ── */
-function Toast({msg,type='info'}){
-  const bg=type==='error'?'rgba(241,95,41,.95)':type==='success'?'rgba(141,198,63,.95)':'rgba(0,144,193,.95)';
-  return <div style={{position:'fixed',top:20,left:'50%',transform:'translateX(-50%)',background:bg,color:'#fff',borderRadius:12,padding:'12px 20px',fontWeight:700,fontSize:13,zIndex:99999,animation:'mqFadeUp .3s ease',boxShadow:'0 8px 30px rgba(0,0,0,.4)',whiteSpace:'nowrap',maxWidth:'90vw',textAlign:'center'}}>{msg}</div>;
-}
-
-/* ── BNav ── */
+/* ── BOTTOM NAV ── */
 function BNav({cur,go,isAdmin}){
   const items=[
     {id:'dashboard',label:'Início',IC:IcHome},
@@ -140,7 +174,7 @@ function BNav({cur,go,isAdmin}){
     {id:'ranking',label:'Ranking',IC:IcTrophy},
     {id:'profile',label:'Perfil',IC:IcUser},
   ];
-  if(isAdmin) items.push({id:'admin',label:'Admin',IC:IcShield});
+  if(isAdmin)items.push({id:'admin',label:'Admin',IC:IcShield});
   return(
     <div className="bnav">
       <div className="bnav-inner">
@@ -160,30 +194,93 @@ function BNav({cur,go,isAdmin}){
   );
 }
 
-/* ── YouTube Button ── */
-function YTButton({url, isCorrect}){
-  if(!url) return null;
-  const cleanUrl = url.replace(/\\_/g,'_').replace(/\\/g,'');
-  const msg = isCorrect
-    ? '▶ Aprofunde seu conhecimento no vídeo'
-    : '▶ Aprenda mais sobre esse tema no vídeo';
-  const bg = isCorrect ? 'rgba(141,198,63,.15)' : 'rgba(241,95,41,.15)';
-  const border = isCorrect ? 'rgba(141,198,63,.35)' : 'rgba(241,95,41,.35)';
-  const color = isCorrect ? '#8dc63f' : '#f15f29';
+/* ── YOUTUBE BUTTON ── */
+function YTButton({url,isCorrect}){
+  if(!url)return null;
+  const cleanUrl=url.replace(/\\_/g,'_').replace(/\\/g,'');
+  const msg=isCorrect?'▶ Aprofunde seu conhecimento no vídeo':'▶ Aprenda mais sobre esse tema no vídeo';
+  const col=isCorrect?'#8dc63f':'#f15f29';
+  const bg=isCorrect?'rgba(141,198,63,.15)':'rgba(241,95,41,.15)';
+  const border=isCorrect?'rgba(141,198,63,.35)':'rgba(241,95,41,.35)';
   return(
-    <a href={cleanUrl} target="_blank" rel="noopener noreferrer" style={{
-      display:'flex',alignItems:'center',gap:10,
-      marginTop:12,padding:'12px 14px',
-      background:bg,border:`1px solid ${border}`,
-      borderRadius:12,color,fontSize:13,fontWeight:700,
-      textDecoration:'none',transition:'background .2s',
-      fontFamily:'Poppins',
-    }}
-    onMouseEnter={e=>e.currentTarget.style.opacity='.85'}
-    onMouseLeave={e=>e.currentTarget.style.opacity='1'}>
-      <svg width="20" height="20" viewBox="0 0 24 24" fill={color}><path d="M23 7s-.3-2-1.2-2.8c-1.1-1.2-2.4-1.2-3-1.3C16.2 2.8 12 2.8 12 2.8s-4.2 0-6.8.1c-.6.1-1.9.1-3 1.3C1.3 5 1 7 1 7S.7 9.2.7 11.5v2.1c0 2.2.3 4.4.3 4.4s.3 2 1.2 2.8c1.1 1.2 2.6 1.1 3.3 1.2C7.5 22 12 22 12 22s4.2 0 6.8-.2c.6-.1 1.9-.1 3-1.3.9-.8 1.2-2.8 1.2-2.8s.3-2.2.3-4.4v-2.1C23.3 9.2 23 7 23 7zM9.7 15.5V8.3l8.1 3.6-8.1 3.6z"/></svg>
+    <a href={cleanUrl} target="_blank" rel="noopener noreferrer"
+      onClick={()=>window.track('youtube_click',{is_correct:isCorrect,url:cleanUrl})}
+      style={{display:'flex',alignItems:'center',gap:10,marginTop:12,padding:'12px 14px',background:bg,border:`1px solid ${border}`,borderRadius:12,color:col,fontSize:13,fontWeight:700,textDecoration:'none',fontFamily:'Poppins'}}>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill={col}><path d="M23 7s-.3-2-1.2-2.8c-1.1-1.2-2.4-1.2-3-1.3C16.2 2.8 12 2.8 12 2.8s-4.2 0-6.8.1c-.6.1-1.9.1-3 1.3C1.3 5 1 7 1 7S.7 9.2.7 11.5v2.1c0 2.2.3 4.4.3 4.4s.3 2 1.2 2.8c1.1 1.2 2.6 1.1 3.3 1.2C7.5 22 12 22 12 22s4.2 0 6.8-.2c.6-.1 1.9-.1 3-1.3.9-.8 1.2-2.8 1.2-2.8s.3-2.2.3-4.4v-2.1C23.3 9.2 23 7 23 7zM9.7 15.5V8.3l8.1 3.6-8.1 3.6z"/></svg>
       <span style={{flex:1,lineHeight:1.3}}>{msg}</span>
     </a>
+  );
+}
+
+/* ══ MICRO-FEEDBACK ══ */
+function MicroFeedback({session,date,onDone}){
+  const [step,setStep]=useState(0);
+  const [answers,setAnswers]=useState({});
+  const [saving,setSaving]=useState(false);
+
+  const questions=[
+    {key:'liked_quiz',label:'Você gostou do quiz de hoje?',opts:[{v:true,l:'👍 Sim'},{v:false,l:'👎 Não'}],type:'bool'},
+    {key:'difficulty',label:'O quiz de hoje foi...',opts:[{v:'facil',l:'😊 Fácil'},{v:'medio',l:'😐 Médio'},{v:'dificil',l:'😅 Difícil'}],type:'str'},
+    {key:'will_return',label:'Você pretende voltar amanhã?',opts:[{v:true,l:'🔥 Sim!'},{v:false,l:'🤔 Talvez'}],type:'bool'},
+    {key:'motivation',label:'O que mais te motivou hoje?',opts:[{v:'aprender',l:'🧠 Aprender'},{v:'competir',l:'🏆 Competir'},{v:'habito',l:'🔁 Hábito'},{v:'outro',l:'✨ Outro'}],type:'str'},
+    {key:'video_useful',label:'O vídeo relacionado foi útil?',opts:[{v:true,l:'✅ Sim'},{v:false,l:'❌ Não vi'},{v:null,l:'⏭️ Pulei'}],type:'bool'},
+  ];
+
+  const q=questions[step];
+
+  const pick=async(val)=>{
+    const newAnswers={...answers,[q.key]:val};
+    setAnswers(newAnswers);
+    window.track('feedback_answer',{question:q.key,value:String(val)});
+    if(step<questions.length-1){
+      setStep(step+1);
+    }else{
+      setSaving(true);
+      try{
+        await sb.from('feedback_responses').upsert({
+          user_id:session.user.id,
+          date,
+          liked_quiz:newAnswers.liked_quiz??null,
+          difficulty:newAnswers.difficulty||null,
+          will_return:newAnswers.will_return??null,
+          motivation:newAnswers.motivation||null,
+          video_useful:newAnswers.video_useful??null,
+        });
+      }catch(e){console.error(e);}finally{setSaving(false);onDone();}
+    }
+  };
+
+  return(
+    <div style={{minHeight:'100vh',background:'linear-gradient(180deg,#001c27,#003e52)',display:'flex',alignItems:'center',justifyContent:'center',padding:'24px 20px'}}>
+      <div style={{width:'100%',maxWidth:400,animation:'mqFadeUp .35s ease'}}>
+        <div style={{textAlign:'center',marginBottom:28}}>
+          <div style={{display:'flex',justifyContent:'center',gap:6,marginBottom:20}}>
+            {questions.map((_,i)=>(
+              <div key={i} style={{width:i<=step?28:8,height:6,borderRadius:3,background:i<step?'#8dc63f':i===step?'#F5FF0F':'rgba(255,255,255,.18)',transition:'all .3s'}}/>
+            ))}
+          </div>
+          <div style={{color:'rgba(255,255,255,.45)',fontSize:11,fontWeight:700,textTransform:'uppercase',letterSpacing:1,marginBottom:10}}>{step+1} de {questions.length}</div>
+          <p style={{color:'#fff',fontSize:18,fontWeight:800,lineHeight:1.4}}>{q.label}</p>
+        </div>
+        <div style={{display:'flex',flexDirection:'column',gap:10}}>
+          {q.opts.map(o=>(
+            <button key={String(o.v)} onClick={()=>pick(o.v)} disabled={saving} style={{
+              background:'rgba(255,255,255,.08)',border:'2px solid rgba(255,255,255,.14)',
+              borderRadius:16,padding:'16px 20px',
+              color:'#fff',fontFamily:'Poppins',fontWeight:700,fontSize:15,
+              cursor:'pointer',transition:'all .18s',textAlign:'center',
+            }}
+            onMouseEnter={e=>{e.currentTarget.style.background='rgba(141,198,63,.15)';e.currentTarget.style.borderColor='rgba(141,198,63,.5)'}}
+            onMouseLeave={e=>{e.currentTarget.style.background='rgba(255,255,255,.08)';e.currentTarget.style.borderColor='rgba(255,255,255,.14)'}}>
+              {o.l}
+            </button>
+          ))}
+        </div>
+        <button onClick={onDone} style={{background:'none',border:'none',color:'rgba(255,255,255,.28)',fontFamily:'Poppins',fontSize:12,cursor:'pointer',marginTop:20,width:'100%',padding:'8px',textAlign:'center'}}>
+          Pular feedback →
+        </button>
+      </div>
+    </div>
   );
 }
 
@@ -207,10 +304,12 @@ function LoginScreen({onLogin}){
         if(!birthdate){setErr('Informe sua data de nascimento');setLoading(false);return;}
         const {data,error}=await sb.auth.signUp({email,password:pass,options:{data:{username:name.trim(),gender,birthdate}}});
         if(error)throw error;
+        window.track('sign_up',{method:'email'});
         if(data.user)onLogin(data.user);
       }else{
         const {data,error}=await sb.auth.signInWithPassword({email,password:pass});
         if(error)throw error;
+        window.track('login',{method:'email'});
         if(data.user)onLogin(data.user);
       }
     }catch(e){
@@ -223,59 +322,62 @@ function LoginScreen({onLogin}){
   };
 
   return(
-    <div style={{minHeight:'100vh',background:'linear-gradient(155deg,#003e52 0%,#002233 60%,#231f20 100%)',display:'flex',alignItems:'center',justifyContent:'center',padding:'24px 20px'}}>
-      <div style={{width:'100%',maxWidth:400,animation:'mqFadeUp .4s ease'}}>
-        <div style={{textAlign:'center',marginBottom:32}}>
-          <div style={{display:'inline-flex',alignItems:'center',justifyContent:'center',width:68,height:68,borderRadius:20,background:'linear-gradient(135deg,#8dc63f,#0090C1)',marginBottom:12,boxShadow:'0 10px 32px rgba(141,198,63,.4)',animation:'mqFloat 3s ease-in-out infinite'}}>
-            <IcZap s={32}/>
+    <div style={{minHeight:'100vh',background:'linear-gradient(155deg,#003e52 0%,#002233 60%,#231f20 100%)',display:'flex',flexDirection:'column'}}>
+      <BetaBanner/>
+      <div style={{flex:1,display:'flex',alignItems:'center',justifyContent:'center',padding:'24px 20px'}}>
+        <div style={{width:'100%',maxWidth:400,animation:'mqFadeUp .4s ease'}}>
+          <div style={{textAlign:'center',marginBottom:32}}>
+            <div style={{display:'inline-flex',alignItems:'center',justifyContent:'center',width:68,height:68,borderRadius:20,background:'linear-gradient(135deg,#8dc63f,#0090C1)',marginBottom:12,boxShadow:'0 10px 32px rgba(141,198,63,.4)',animation:'mqFloat 3s ease-in-out infinite'}}>
+              <IcZap s={32}/>
+            </div>
+            <div style={{fontSize:26,fontWeight:900,background:'linear-gradient(90deg,#8dc63f,#F5FF0F)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent'}}>Momento QUIZ</div>
+            <div style={{color:'rgba(255,255,255,.42)',fontSize:12,marginTop:5}}>Aprenda jogando. Evolua de verdade.</div>
           </div>
-          <div style={{fontSize:26,fontWeight:900,background:'linear-gradient(90deg,#8dc63f,#F5FF0F)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent'}}>Momento QUIZ</div>
-          <div style={{color:'rgba(255,255,255,.42)',fontSize:12,marginTop:5}}>Aprenda jogando. Evolua de verdade.</div>
-        </div>
 
-        <div style={{display:'flex',background:'rgba(255,255,255,.08)',borderRadius:14,padding:4,marginBottom:20}}>
-          {['login','register'].map(m=>(
-            <button key={m} onClick={()=>{setMode(m);setErr('')}} style={{flex:1,padding:'10px',border:'none',borderRadius:10,fontFamily:'Poppins',fontWeight:700,fontSize:13,cursor:'pointer',transition:'all .22s',background:mode===m?'#8dc63f':'transparent',color:mode===m?'#003e52':'rgba(255,255,255,.5)',boxShadow:mode===m?'0 3px 14px rgba(141,198,63,.3)':'none'}}>
-              {m==='login'?'Entrar':'Criar Conta'}
-            </button>
-          ))}
-        </div>
+          <div style={{display:'flex',background:'rgba(255,255,255,.08)',borderRadius:14,padding:4,marginBottom:20}}>
+            {['login','register'].map(m=>(
+              <button key={m} onClick={()=>{setMode(m);setErr('')}} style={{flex:1,padding:'10px',border:'none',borderRadius:10,fontFamily:'Poppins',fontWeight:700,fontSize:13,cursor:'pointer',transition:'all .22s',background:mode===m?'#8dc63f':'transparent',color:mode===m?'#003e52':'rgba(255,255,255,.5)',boxShadow:mode===m?'0 3px 14px rgba(141,198,63,.3)':'none'}}>
+                {m==='login'?'Entrar':'Criar Conta'}
+              </button>
+            ))}
+          </div>
 
-        <div style={{display:'flex',flexDirection:'column',gap:12}}>
-          {mode==='register'&&(
-            <>
-              <div style={{animation:'mqFadeUp .25s ease'}}>
-                <label style={{color:'rgba(255,255,255,.45)',fontSize:11,fontWeight:700,textTransform:'uppercase',letterSpacing:.8,display:'block',marginBottom:6}}>Nome</label>
-                <input className="inp" placeholder="Seu nome" value={name} onChange={e=>setName(e.target.value)}/>
-              </div>
-              <div>
-                <label style={{color:'rgba(255,255,255,.45)',fontSize:11,fontWeight:700,textTransform:'uppercase',letterSpacing:.8,display:'block',marginBottom:6}}>Gênero</label>
-                <div style={{display:'flex',gap:8}}>
-                  {[{v:'masculino',l:'Masculino',e:'👨'},{v:'feminino',l:'Feminino',e:'👩'},{v:'nao-binario',l:'Não-binário',e:'🧑'}].map(g=>(
-                    <button key={g.v} type="button" onClick={()=>setGender(g.v)} style={{flex:1,padding:'10px 6px',border:`2px solid ${gender===g.v?'#8dc63f':'rgba(255,255,255,.12)'}`,borderRadius:12,background:gender===g.v?'rgba(141,198,63,.15)':'rgba(255,255,255,.06)',color:gender===g.v?'#8dc63f':'rgba(255,255,255,.6)',fontFamily:'Poppins',fontSize:10.5,fontWeight:700,cursor:'pointer',transition:'all .2s',display:'flex',flexDirection:'column',alignItems:'center',gap:4}}>
-                      <span style={{fontSize:18}}>{g.e}</span>{g.l}
-                    </button>
-                  ))}
+          <div style={{display:'flex',flexDirection:'column',gap:12}}>
+            {mode==='register'&&(
+              <>
+                <div>
+                  <label style={{color:'rgba(255,255,255,.45)',fontSize:11,fontWeight:700,textTransform:'uppercase',letterSpacing:.8,display:'block',marginBottom:6}}>Nome</label>
+                  <input className="inp" placeholder="Seu nome" value={name} onChange={e=>setName(e.target.value)}/>
                 </div>
-              </div>
-              <div>
-                <label style={{color:'rgba(255,255,255,.45)',fontSize:11,fontWeight:700,textTransform:'uppercase',letterSpacing:.8,display:'block',marginBottom:6}}>Data de Nascimento</label>
-                <input className="inp" type="date" value={birthdate} onChange={e=>setBirthdate(e.target.value)} max={new Date().toISOString().split('T')[0]} style={{colorScheme:'dark'}}/>
-              </div>
-            </>
-          )}
-          <div>
-            <label style={{color:'rgba(255,255,255,.45)',fontSize:11,fontWeight:700,textTransform:'uppercase',letterSpacing:.8,display:'block',marginBottom:6}}>Email</label>
-            <input className="inp" type="email" placeholder="seu@email.com" value={email} onChange={e=>setEmail(e.target.value)} onKeyDown={e=>e.key==='Enter'&&submit()}/>
+                <div>
+                  <label style={{color:'rgba(255,255,255,.45)',fontSize:11,fontWeight:700,textTransform:'uppercase',letterSpacing:.8,display:'block',marginBottom:6}}>Gênero</label>
+                  <div style={{display:'flex',gap:8}}>
+                    {[{v:'masculino',l:'Masculino',e:'👨'},{v:'feminino',l:'Feminino',e:'👩'},{v:'nao-binario',l:'Não-binário',e:'🧑'}].map(g=>(
+                      <button key={g.v} type="button" onClick={()=>setGender(g.v)} style={{flex:1,padding:'10px 6px',border:`2px solid ${gender===g.v?'#8dc63f':'rgba(255,255,255,.12)'}`,borderRadius:12,background:gender===g.v?'rgba(141,198,63,.15)':'rgba(255,255,255,.06)',color:gender===g.v?'#8dc63f':'rgba(255,255,255,.6)',fontFamily:'Poppins',fontSize:10.5,fontWeight:700,cursor:'pointer',transition:'all .2s',display:'flex',flexDirection:'column',alignItems:'center',gap:4}}>
+                        <span style={{fontSize:18}}>{g.e}</span>{g.l}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <label style={{color:'rgba(255,255,255,.45)',fontSize:11,fontWeight:700,textTransform:'uppercase',letterSpacing:.8,display:'block',marginBottom:6}}>Data de Nascimento</label>
+                  <input className="inp" type="date" value={birthdate} onChange={e=>setBirthdate(e.target.value)} max={new Date().toISOString().split('T')[0]} style={{colorScheme:'dark'}}/>
+                </div>
+              </>
+            )}
+            <div>
+              <label style={{color:'rgba(255,255,255,.45)',fontSize:11,fontWeight:700,textTransform:'uppercase',letterSpacing:.8,display:'block',marginBottom:6}}>Email</label>
+              <input className="inp" type="email" placeholder="seu@email.com" value={email} onChange={e=>setEmail(e.target.value)} onKeyDown={e=>e.key==='Enter'&&submit()}/>
+            </div>
+            <div>
+              <label style={{color:'rgba(255,255,255,.45)',fontSize:11,fontWeight:700,textTransform:'uppercase',letterSpacing:.8,display:'block',marginBottom:6}}>Senha</label>
+              <input className="inp" type="password" placeholder="Mínimo 6 caracteres" value={pass} onChange={e=>setPass(e.target.value)} onKeyDown={e=>e.key==='Enter'&&submit()}/>
+            </div>
+            {err&&<div style={{background:'rgba(241,95,41,.15)',border:'1px solid rgba(241,95,41,.35)',borderRadius:10,padding:'10px 14px',color:'#f15f29',fontSize:13,fontWeight:600}}>{err}</div>}
+            <button className="btn-cta" onClick={submit} disabled={loading} style={{marginTop:4}}>
+              {loading?<span className="spinner"/>:mode==='login'?<><IcZap s={17}/>Entrar</>:<>🎯 Criar Conta</>}
+            </button>
           </div>
-          <div>
-            <label style={{color:'rgba(255,255,255,.45)',fontSize:11,fontWeight:700,textTransform:'uppercase',letterSpacing:.8,display:'block',marginBottom:6}}>Senha</label>
-            <input className="inp" type="password" placeholder="Mínimo 6 caracteres" value={pass} onChange={e=>setPass(e.target.value)} onKeyDown={e=>e.key==='Enter'&&submit()}/>
-          </div>
-          {err&&<div style={{background:'rgba(241,95,41,.15)',border:'1px solid rgba(241,95,41,.35)',borderRadius:10,padding:'10px 14px',color:'#f15f29',fontSize:13,fontWeight:600}}>{err}</div>}
-          <button className="btn-cta" onClick={submit} disabled={loading} style={{marginTop:4}}>
-            {loading?<span className="spinner"/>:mode==='login'?<><IcZap s={17}/>Entrar</>:<>🎯 Criar Conta</>}
-          </button>
         </div>
       </div>
     </div>
@@ -284,36 +386,37 @@ function LoginScreen({onLogin}){
 
 /* ══ SCREEN: DASHBOARD ══ */
 function DashboardScreen({go,session,profile,dailyState}){
-  const {answered,correct,question,loading:dLoading}=dailyState;
+  const {answered,correct,loading:dLoading}=dailyState;
   const xpCur=profile?.total_score||0;
   const level=Math.floor(xpCur/500)+1;
   const xpNext=level*500,xpPrev=(level-1)*500;
   const xpPct=Math.min(100,Math.round(((xpCur-xpPrev)/500)*100));
   const name=profile?.username||session?.user?.user_metadata?.username||'Jogador';
-
-  // countdown to next question (midnight Brasilia)
   const [countdown,setCountdown]=useState('');
+
   useEffect(()=>{
+    window.track('page_view',{page:'dashboard'});
     const tick=()=>{
-      const now=new Date();
-      const sp=new Date(now.toLocaleString('en-US',{timeZone:'America/Sao_Paulo'}));
-      const midnight=new Date(sp);
-      midnight.setDate(midnight.getDate()+1);
-      midnight.setHours(0,0,0,0);
+      const sp=new Date(new Date().toLocaleString('en-US',{timeZone:'America/Sao_Paulo'}));
+      const midnight=new Date(sp);midnight.setDate(midnight.getDate()+1);midnight.setHours(0,0,0,0);
       const diff=midnight-sp;
       const h=Math.floor(diff/3600000).toString().padStart(2,'0');
       const m=Math.floor((diff%3600000)/60000).toString().padStart(2,'0');
       const s=Math.floor((diff%60000)/1000).toString().padStart(2,'0');
       setCountdown(`${h}:${m}:${s}`);
     };
-    tick();
-    const id=setInterval(tick,1000);
-    return()=>clearInterval(id);
+    tick();const id=setInterval(tick,1000);return()=>clearInterval(id);
   },[]);
+
+  const startQuiz=()=>{
+    window.track('quiz_start',{date:todayBrasilia()});
+    go('quiz');
+  };
 
   return(
     <div style={{minHeight:'100%',background:'linear-gradient(180deg,#004860 0%,#003e52 40%,#002d3d 100%)',paddingBottom:20}}>
-      <div style={{padding:'52px 20px 18px',background:'linear-gradient(180deg,rgba(0,72,96,.8),transparent)'}}>
+      <BetaBanner/>
+      <div style={{padding:'20px 20px 18px',background:'linear-gradient(180deg,rgba(0,72,96,.8),transparent)'}}>
         <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',maxWidth:480,margin:'0 auto',marginBottom:16}}>
           <div>
             <div style={{color:'rgba(255,255,255,.45)',fontSize:12,fontWeight:600}}>Bem-vindo de volta 👋</div>
@@ -322,18 +425,14 @@ function DashboardScreen({go,session,profile,dailyState}){
           <button onClick={()=>go('profile')} style={{width:46,height:46,borderRadius:23,background:'linear-gradient(135deg,#8dc63f,#0090C1)',border:'none',cursor:'pointer',fontSize:22,boxShadow:'0 4px 16px rgba(141,198,63,.3)'}}>😎</button>
         </div>
 
-        {/* XP Card */}
         <div style={{maxWidth:480,margin:'0 auto'}}>
           <div style={{background:'linear-gradient(135deg,#001c27,#002d3d)',borderRadius:20,padding:'18px 20px 16px',border:'1px solid rgba(245,255,15,.18)',position:'relative',overflow:'hidden',boxShadow:'0 8px 36px rgba(0,0,0,.35)'}}>
             <div style={{position:'absolute',right:-12,top:-12,fontSize:80,opacity:.05,lineHeight:1}}>⚡</div>
             <div style={{color:'rgba(255,255,255,.4)',fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:1.5}}>Pontuação Total</div>
-            <div style={{fontSize:48,fontWeight:900,color:'#F5FF0F',lineHeight:1.05,animation:'mqGlow 4s ease-in-out infinite',marginTop:3}}>{xpCur.toLocaleString('pt-BR')}</div>
+            <div style={{fontSize:48,fontWeight:900,color:'#F5FF0F',lineHeight:1.05,animation:'mqGlow 4s ease-in-out infinite',marginTop:3}}>{parseFloat(xpCur).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}</div>
             <div style={{display:'flex',alignItems:'center',gap:8,marginTop:5}}><span className="pill">Nível {level}</span><span style={{color:'rgba(255,255,255,.35)',fontSize:11}}>Streak: {profile?.current_streak||0} dias 🔥</span></div>
             <div style={{marginTop:12}}>
-              <div style={{display:'flex',justifyContent:'space-between',marginBottom:4}}>
-                <span style={{color:'rgba(255,255,255,.38)',fontSize:10}}>Próximo nível</span>
-                <span style={{color:'#F5FF0F',fontSize:10,fontWeight:700}}>{xpCur} / {xpNext} XP</span>
-              </div>
+              <div style={{display:'flex',justifyContent:'space-between',marginBottom:4}}><span style={{color:'rgba(255,255,255,.38)',fontSize:10}}>Próximo nível</span><span style={{color:'#F5FF0F',fontSize:10,fontWeight:700}}>{xpCur} / {xpNext} XP</span></div>
               <div className="progress-bar"><div className="progress-fill" style={{width:`${xpPct}%`}}/></div>
             </div>
           </div>
@@ -341,54 +440,43 @@ function DashboardScreen({go,session,profile,dailyState}){
       </div>
 
       <div style={{padding:'0 20px',maxWidth:480,margin:'0 auto'}}>
-        {/* Daily Quiz Card */}
+        {/* Daily card — question is HIDDEN, just the CTA */}
         <div style={{marginBottom:14}}>
           {dLoading?(
             <div className="card" style={{textAlign:'center',padding:28}}><span className="spinner" style={{margin:'0 auto',display:'block'}}/></div>
           ):answered?(
-            /* Already answered today */
             <div className="card" style={{background:'rgba(141,198,63,.08)',border:'1.5px solid rgba(141,198,63,.25)',padding:'20px'}}>
               <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:14}}>
                 <span style={{fontSize:32}}>{correct?'🏆':'💪'}</span>
                 <div>
                   <div style={{color:'#8dc63f',fontSize:11,fontWeight:800,textTransform:'uppercase',letterSpacing:1}}>Pergunta de Hoje</div>
-                  <div style={{color:'#fff',fontSize:14,fontWeight:700,marginTop:2}}>{correct?'Você acertou hoje!':'Você respondeu hoje!'}</div>
+                  <div style={{color:'#fff',fontSize:14,fontWeight:700,marginTop:2}}>{correct?'Você acertou!':'Você respondeu hoje!'}</div>
                 </div>
               </div>
               <div style={{background:'rgba(0,0,0,.2)',borderRadius:10,padding:'10px 12px',marginBottom:14}}>
-                <div style={{color:'rgba(255,255,255,.5)',fontSize:11,marginBottom:4}}>Próxima pergunta em</div>
+                <div style={{color:'rgba(255,255,255,.5)',fontSize:11,marginBottom:4}}>Nova pergunta em</div>
                 <div style={{color:'#F5FF0F',fontSize:22,fontWeight:900,fontVariantNumeric:'tabular-nums',letterSpacing:2}}>{countdown}</div>
               </div>
               <button className="btn-cta" onClick={()=>go('ranking')} style={{fontSize:13}}>
-                <IcTrophy s={16} c="#fff"/>Ver minha posição no ranking
-              </button>
-            </div>
-          ):question?(
-            /* Has question for today */
-            <div className="card" style={{background:'linear-gradient(135deg,rgba(0,62,82,.8),rgba(0,45,61,.8))',border:'1.5px solid rgba(245,255,15,.2)',padding:'20px'}}>
-              <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:12}}>
-                <span style={{fontSize:20}}>🎯</span>
-                <div>
-                  <div style={{color:'#F5FF0F',fontSize:10,fontWeight:800,textTransform:'uppercase',letterSpacing:1}}>Pergunta de Hoje</div>
-                  <div style={{color:'rgba(255,255,255,.4)',fontSize:10,marginTop:1}}>Uma nova pergunta todo dia às 00h</div>
-                </div>
-              </div>
-              <p style={{color:'rgba(255,255,255,.85)',fontSize:13.5,lineHeight:1.5,marginBottom:16}}>
-                {question.question?.replace(/[\u200c\u200b\u200d\u00ad]/g,'').trim()}
-              </p>
-              <button className="btn-cta" onClick={()=>go('quiz')} style={{fontSize:14,padding:'15px'}}>
-                <IcZap s={17} c="#fff"/>Responder Agora
+                <IcTrophy s={16} c="#fff"/>Ver ranking
               </button>
             </div>
           ):(
-            <div className="card" style={{textAlign:'center',padding:'24px 16px'}}>
-              <div style={{fontSize:32,marginBottom:8}}>😴</div>
-              <div style={{color:'rgba(255,255,255,.5)',fontSize:13}}>Sem pergunta agendada para hoje.</div>
+            /* Question EXISTS but is hidden — just show the CTA */
+            <div style={{background:'linear-gradient(135deg,rgba(245,255,15,.06),rgba(0,144,193,.08))',borderRadius:20,padding:'24px 20px',border:'1px solid rgba(245,255,15,.2)',textAlign:'center',position:'relative',overflow:'hidden'}}>
+              <div style={{position:'absolute',inset:0,background:'radial-gradient(ellipse at 50% 0%,rgba(245,255,15,.06),transparent 60%)',pointerEvents:'none'}}/>
+              <div style={{fontSize:48,marginBottom:8,animation:'mqFloat 3s ease-in-out infinite'}}>🎯</div>
+              <div style={{color:'#F5FF0F',fontSize:11,fontWeight:800,textTransform:'uppercase',letterSpacing:1.5,marginBottom:6}}>Pergunta de Hoje</div>
+              <p style={{color:'rgba(255,255,255,.65)',fontSize:13,lineHeight:1.5,marginBottom:20}}>
+                Uma nova pergunta sobre saúde e ciência.<br/>Você tem <strong style={{color:'#fff'}}>30 segundos</strong> — quanto mais rápido, mais pontos!
+              </p>
+              <button className="btn-cta" onClick={startQuiz} style={{fontSize:15,padding:'17px',boxShadow:'0 8px 32px rgba(141,198,63,.4)'}}>
+                <IcZap s={18} c="#fff"/>Responder agora
+              </button>
             </div>
           )}
         </div>
 
-        {/* Stats */}
         <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:8,marginBottom:14}}>
           {[{v:profile?.quizzes_played||0,l:'Respondidas',e:'🎯'},{v:`${profile?.current_streak||0}×`,l:'Streak',e:'🔥'},{v:`#${profile?.ranking_pos||'–'}`,l:'Ranking',e:'🏆'}].map((s,i)=>(
             <div key={i} className="card" style={{textAlign:'center',padding:'14px 6px'}}>
@@ -398,38 +486,58 @@ function DashboardScreen({go,session,profile,dailyState}){
             </div>
           ))}
         </div>
+
+        {/* Feedback link */}
+        <a href={FEEDBACK_URL} target="_blank" rel="noopener noreferrer"
+          onClick={()=>window.track('feedback_link_click',{location:'dashboard'})}
+          style={{display:'flex',alignItems:'center',gap:12,padding:'14px 16px',background:'rgba(0,144,193,.1)',border:'1px solid rgba(0,144,193,.25)',borderRadius:14,textDecoration:'none',marginBottom:4}}>
+          <IcMsgSquare s={20} c="#0090C1"/>
+          <div>
+            <div style={{color:'#0090C1',fontSize:12,fontWeight:700}}>Deixe seu feedback</div>
+            <div style={{color:'rgba(255,255,255,.45)',fontSize:11,marginTop:1}}>Sua opinião ajuda a construir o app</div>
+          </div>
+          <IcArrow s={14} c="rgba(255,255,255,.25)"/>
+        </a>
       </div>
     </div>
   );
 }
 
-/* ══ SCREEN: QUIZ (daily) ══ */
+/* ══ SCREEN: QUIZ ══ */
 function QuizScreen({onFinish,session,dailyState}){
   const {question:q,loading:dLoading}=dailyState;
   const [sel,setSel]=useState(null);
-  const [t,setT]=useState(30);
+  const [centis,setCentis]=useState(3000); // 30.00 seconds in centiseconds
   const [showTip,setShowTip]=useState(false);
   const [popup,setPopup]=useState(null);
   const [saving,setSaving]=useState(false);
   const tid=useRef(null);
-  const startTime=useRef(Date.now());
+  const startRef=useRef(null);
   const answered=sel!==null;
 
   useEffect(()=>{
     if(!q||answered)return;
-    tid.current=setInterval(()=>setT(prev=>{
-      if(prev<=1){clearInterval(tid.current);doAnswer(null,0);return 0;}
-      return prev-1;
-    }),1000);
+    window.track('quiz_question_shown',{question_id:q?.id});
+    startRef.current=performance.now();
+    tid.current=setInterval(()=>{
+      const elapsed=performance.now()-startRef.current;
+      const remaining=Math.max(0,3000-Math.round(elapsed/10));
+      setCentis(remaining);
+      if(remaining<=0){clearInterval(tid.current);doAnswer(null);}
+    },50);
     return()=>clearInterval(tid.current);
   },[q,answered]);
 
-  const doAnswer=async(id,tLeft)=>{
+  const doAnswer=async(id)=>{
     clearInterval(tid.current);
-    setSel(id);setShowTip(true);
+    const elapsed=performance.now()-startRef.current;
+    const remainingCentis=Math.max(0,3000-Math.round(elapsed/10));
+    const pts=parseFloat((remainingCentis/100).toFixed(2));
     const correct=id===q?.answer_letter;
-    const pts=Math.max(0,tLeft??t);
-    if(pts>0){setPopup(pts);setTimeout(()=>setPopup(null),1400);}
+    const finalPts=correct?pts:0;
+    setSel(id);setShowTip(true);
+    if(finalPts>0){setPopup(finalPts);setTimeout(()=>setPopup(null),1600);}
+    window.track('quiz_answered',{correct,pts:finalPts,time_taken:30-pts});
     setSaving(true);
     try{
       const today=todayBrasilia();
@@ -439,42 +547,44 @@ function QuizScreen({onFinish,session,dailyState}){
         question_id:q.id,
         chosen_letter:id,
         is_correct:correct,
+        score:finalPts,
       });
-      if(correct||pts>0){
+      const {data:prof}=await sb.from('profiles').select('total_score,quizzes_played').eq('id',session.user.id).single();
+      if(prof){
         await sb.from('profiles').update({
-          total_score:sb.rpc?undefined:undefined,
+          total_score:parseFloat(((prof.total_score||0)+finalPts).toFixed(2)),
+          quizzes_played:(prof.quizzes_played||0)+1,
         }).eq('id',session.user.id);
-        // Update score via RPC or direct
-        await sb.rpc('increment_score',{uid:session.user.id,pts}).catch(()=>{
-          sb.from('profiles').select('total_score').eq('id',session.user.id).single().then(({data})=>{
-            if(data) sb.from('profiles').update({total_score:(data.total_score||0)+pts,quizzes_played:(data.quizzes_played||0)+1}).eq('id',session.user.id);
-          });
-        });
       }
-      setTimeout(()=>{onFinish({correct,pts,question:q});},100);
-    }catch(e){console.error(e);}finally{setSaving(false);}
+      setTimeout(()=>onFinish({correct,pts:finalPts,question:q}),120);
+    }catch(e){console.error(e);setTimeout(()=>onFinish({correct,pts:finalPts,question:q}),120);}
+    finally{setSaving(false);}
   };
 
-  if(dLoading) return <div style={{height:'100vh',display:'flex',alignItems:'center',justifyContent:'center',background:'#002d3d',flexDirection:'column',gap:16}}><span className="spinner"/><span style={{color:'rgba(255,255,255,.5)',fontSize:13}}>Carregando...</span></div>;
-  if(!q) return <div style={{height:'100vh',display:'flex',alignItems:'center',justifyContent:'center',background:'#002d3d',flexDirection:'column',gap:12,padding:24,textAlign:'center'}}><span style={{fontSize:36}}>😴</span><span style={{color:'rgba(255,255,255,.5)'}}>Sem pergunta para hoje.</span></div>;
+  if(dLoading)return<div style={{height:'100vh',display:'flex',alignItems:'center',justifyContent:'center',background:'#002d3d',flexDirection:'column',gap:16}}><span className="spinner"/><span style={{color:'rgba(255,255,255,.5)',fontSize:13}}>Carregando...</span></div>;
+  if(!q)return<div style={{height:'100vh',display:'flex',alignItems:'center',justifyContent:'center',background:'#002d3d',flexDirection:'column',gap:12,padding:24,textAlign:'center'}}><span style={{fontSize:36}}>😴</span><span style={{color:'rgba(255,255,255,.5)'}}>Sem pergunta para hoje.</span></div>;
 
   const opts=[{id:'a',txt:q.option_a},{id:'b',txt:q.option_b},{id:'c',txt:q.option_c},{id:'d',txt:q.option_d}].filter(o=>o.txt);
 
   return(
     <div style={{minHeight:'100%',background:'linear-gradient(180deg,#002d3d 0%,#003e52 100%)',display:'flex',flexDirection:'column'}}>
-      <div style={{padding:'52px 20px 10px',maxWidth:480,margin:'0 auto',width:'100%'}}>
-        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:10}}>
+      <div style={{padding:'16px 20px 8px',maxWidth:480,margin:'0 auto',width:'100%'}}>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
           <span style={{color:'rgba(255,255,255,.5)',fontSize:12,fontWeight:700}}>🗓️ Pergunta de Hoje</span>
           <span className="pill">🏥 Saúde</span>
         </div>
       </div>
 
-      <div style={{padding:'8px 20px 4px',display:'flex',justifyContent:'center',position:'relative',maxWidth:480,margin:'0 auto',width:'100%'}}>
-        <CircTimer t={t}/>
-        {popup&&<div style={{position:'absolute',top:'50%',right:40,transform:'translateY(-50%)',color:'#F5FF0F',fontSize:20,fontWeight:900,animation:'mqScorePop 1.4s ease-out forwards',textShadow:'0 0 16px #F5FF0F88',pointerEvents:'none'}}>+{popup} pts!</div>}
+      <div style={{padding:'6px 20px 2px',display:'flex',justifyContent:'center',position:'relative',maxWidth:480,margin:'0 auto',width:'100%'}}>
+        <CircTimer centis={centis}/>
+        {popup&&(
+          <div style={{position:'absolute',top:'50%',right:40,transform:'translateY(-50%)',color:'#F5FF0F',fontSize:18,fontWeight:900,animation:'mqScorePop 1.6s ease-out forwards',textShadow:'0 0 16px #F5FF0F88',pointerEvents:'none',fontVariantNumeric:'tabular-nums'}}>
+            +{popup.toFixed(2)} pts!
+          </div>
+        )}
       </div>
 
-      <div style={{padding:'12px 20px 10px',maxWidth:480,margin:'0 auto',width:'100%'}}>
+      <div style={{padding:'10px 20px 10px',maxWidth:480,margin:'0 auto',width:'100%'}}>
         <p style={{color:'#fff',fontSize:15,fontWeight:700,lineHeight:1.55,animation:'mqFadeUp .3s ease'}}>
           {q.question?.replace(/[\u200c\u200b\u200d\u00ad]/g,'').trim()}
         </p>
@@ -482,12 +592,11 @@ function QuizScreen({onFinish,session,dailyState}){
 
       <div style={{padding:'0 20px',flex:1,maxWidth:480,margin:'0 auto',width:'100%'}}>
         {opts.map(o=>{
-          const isCorrect=o.id===q.answer_letter;
-          const isSel=o.id===sel;
+          const isCorrect=o.id===q.answer_letter,isSel=o.id===sel;
           let cls='opt';
           if(answered){if(isCorrect)cls='opt correct';else if(isSel)cls='opt wrong';else cls='opt dim';}
           return(
-            <button key={o.id} className={cls} disabled={answered||saving} onClick={()=>doAnswer(o.id,t)}>
+            <button key={o.id} className={cls} disabled={answered||saving} onClick={()=>doAnswer(o.id)}>
               <span style={{width:30,height:30,borderRadius:8,flexShrink:0,display:'flex',alignItems:'center',justifyContent:'center',fontSize:12,fontWeight:800,background:answered?(isCorrect?'#8dc63f':(isSel?'#f15f29':'rgba(255,255,255,.07)')):'rgba(255,255,255,.13)',color:'#fff'}}>
                 {answered&&isCorrect?<IcCheck s={14} c="#fff"/>:answered&&isSel?<IcX s={14} c="#fff"/>:o.id.toUpperCase()}
               </span>
@@ -499,7 +608,6 @@ function QuizScreen({onFinish,session,dailyState}){
         })}
       </div>
 
-      {/* Tip box — always shows after answer */}
       {showTip&&(
         <div style={{margin:'6px 20px',background:'linear-gradient(135deg,#001c27,#002a38)',borderRadius:16,padding:'14px 16px',border:'1px solid rgba(245,255,15,.2)',animation:'mqSlideUp .3s ease',maxWidth:480,alignSelf:'center',width:'calc(100% - 40px)'}}>
           <div style={{color:'#F5FF0F',fontSize:10,fontWeight:800,letterSpacing:.8,marginBottom:6}}>💡 SABIA QUE...</div>
@@ -512,8 +620,8 @@ function QuizScreen({onFinish,session,dailyState}){
       )}
 
       {answered&&(
-        <div style={{padding:'10px 20px 20px',display:'flex',justifyContent:'flex-end',maxWidth:480,margin:'0 auto',width:'100%'}}>
-          <button className="btn-cta" onClick={()=>onFinish({correct:sel===q.answer_letter,pts:Math.max(0,t),question:q})} style={{width:'auto',padding:'13px 22px',fontSize:13.5,animation:'mqFadeUp .3s ease'}}>
+        <div style={{padding:'8px 20px 18px',display:'flex',justifyContent:'flex-end',maxWidth:480,margin:'0 auto',width:'100%'}}>
+          <button className="btn-cta" onClick={()=>onFinish({correct:sel===q.answer_letter,pts:parseFloat((centis/100).toFixed(2)),question:q})} style={{width:'auto',padding:'13px 22px',fontSize:13.5,animation:'mqFadeUp .3s ease'}}>
             🏁 Ver Resultado <IcArrow s={15} c="#fff"/>
           </button>
         </div>
@@ -523,35 +631,41 @@ function QuizScreen({onFinish,session,dailyState}){
 }
 
 /* ══ SCREEN: RESULT ══ */
-function ResultScreen({result,onHome}){
+function ResultScreen({result,onHome,session,onFeedback}){
   const [show,setShow]=useState(false);
-  useEffect(()=>{setTimeout(()=>setShow(true),100);},[]);
+  useEffect(()=>{setTimeout(()=>setShow(true),100);window.track('quiz_result',{correct:result?.correct,pts:result?.pts});},[]);
   const {correct,pts,question:q}=result||{};
 
   return(
-    <div style={{minHeight:'100vh',background:'linear-gradient(155deg,#001c27 0%,#002d3d 50%,#231f20 100%)',display:'flex',alignItems:'center',justifyContent:'center',padding:'40px 20px'}}>
+    <div style={{minHeight:'100vh',background:'linear-gradient(155deg,#001c27 0%,#002d3d 50%,#231f20 100%)',display:'flex',flexDirection:'column'}}>
+      <BetaBanner/>
       <Confetti active={show&&correct}/>
-      <div style={{width:'100%',maxWidth:400,textAlign:'center',animation:'mqFadeUp .4s ease',position:'relative',zIndex:1}}>
-        <div style={{fontSize:72,animation:'mqBounce 1.5s ease .2s infinite',display:'inline-block'}}>{correct?'🏆':'💪'}</div>
-        <div style={{color:'rgba(255,255,255,.42)',fontSize:11,fontWeight:700,textTransform:'uppercase',letterSpacing:2,marginTop:8}}>Resultado de Hoje</div>
-        <div style={{fontSize:56,fontWeight:900,color:'#F5FF0F',lineHeight:1,animation:'mqGlow 2s ease-in-out infinite',marginTop:4}}>+{pts||0}</div>
-        <div style={{color:'rgba(255,255,255,.4)',fontSize:13}}>pontos ganhos</div>
-        <div style={{color:'rgba(255,255,255,.88)',fontSize:15,fontWeight:700,marginTop:12}}>
-          {correct?'Resposta certa! Continue amanhã 🔥':'Não desista! Volte amanhã 💪'}
-        </div>
-
-        <div className="card" style={{textAlign:'left',marginTop:20,padding:'16px'}}>
-          <div style={{color:'rgba(255,255,255,.4)',fontSize:10,fontWeight:800,textTransform:'uppercase',letterSpacing:.8,marginBottom:8}}>Resposta correta</div>
-          <div style={{color:'#8dc63f',fontSize:13,fontWeight:600,marginBottom:q?.justification?10:0}}>
-            {q?.answer_letter?.toUpperCase()}. {q?.[`option_${q.answer_letter}`]}
+      <div style={{flex:1,display:'flex',alignItems:'center',justifyContent:'center',padding:'24px 20px'}}>
+        <div style={{width:'100%',maxWidth:400,textAlign:'center',animation:'mqFadeUp .4s ease',position:'relative',zIndex:1}}>
+          <div style={{fontSize:72,animation:'mqBounce 1.5s ease .2s infinite',display:'inline-block'}}>{correct?'🏆':'💪'}</div>
+          <div style={{color:'rgba(255,255,255,.42)',fontSize:11,fontWeight:700,textTransform:'uppercase',letterSpacing:2,marginTop:8}}>Resultado de Hoje</div>
+          <div style={{fontSize:52,fontWeight:900,color:'#F5FF0F',lineHeight:1,animation:'mqGlow 2s ease-in-out infinite',marginTop:4,fontVariantNumeric:'tabular-nums'}}>+{(pts||0).toFixed(2)}</div>
+          <div style={{color:'rgba(255,255,255,.4)',fontSize:13}}>pontos ganhos</div>
+          <div style={{color:'rgba(255,255,255,.88)',fontSize:15,fontWeight:700,marginTop:12}}>
+            {correct?'Resposta certa! Continue amanhã 🔥':'Não desista! Volte amanhã 💪'}
           </div>
-          {q?.justification&&<p style={{color:'rgba(255,255,255,.7)',fontSize:12.5,lineHeight:1.55}}>{q.justification}</p>}
-          <YTButton url={q?.youtube_url} isCorrect={correct}/>
-        </div>
 
-        <div style={{display:'flex',flexDirection:'column',gap:10,marginTop:18}}>
-          <button className="btn-cta" onClick={()=>onHome('ranking')}><IcTrophy s={16} c="#fff"/>Ver Ranking</button>
-          <button className="btn-ghost" onClick={()=>onHome('dashboard')}>🏠 Voltar ao Início</button>
+          <div className="card" style={{textAlign:'left',marginTop:18,padding:'16px'}}>
+            <div style={{color:'rgba(255,255,255,.4)',fontSize:10,fontWeight:800,textTransform:'uppercase',letterSpacing:.8,marginBottom:8}}>Resposta correta</div>
+            <div style={{color:'#8dc63f',fontSize:13,fontWeight:600,marginBottom:q?.justification?10:0}}>
+              {q?.answer_letter?.toUpperCase()}. {q?.[`option_${q.answer_letter}`]}
+            </div>
+            {q?.justification&&<p style={{color:'rgba(255,255,255,.7)',fontSize:12.5,lineHeight:1.55}}>{q.justification}</p>}
+            <YTButton url={q?.youtube_url} isCorrect={correct}/>
+          </div>
+
+          <div style={{display:'flex',flexDirection:'column',gap:10,marginTop:18}}>
+            <button className="btn-cta" onClick={onFeedback} style={{background:'linear-gradient(135deg,#0090C1,#005f80)'}}>
+              <IcMsgSquare s={16} c="#fff"/>Responder pesquisa rápida (30s)
+            </button>
+            <button className="btn-ghost" onClick={()=>onHome('ranking')}><IcTrophy s={16} c="#fff"/>Ver Ranking</button>
+            <button className="btn-ghost" onClick={()=>onHome('dashboard')}>🏠 Voltar ao Início</button>
+          </div>
         </div>
       </div>
     </div>
@@ -563,6 +677,7 @@ function HistoryScreen({session}){
   const [hist,setHist]=useState([]);
   const [loading,setLoading]=useState(true);
   useEffect(()=>{
+    window.track('page_view',{page:'history'});
     const load=async()=>{
       try{
         const {data}=await sb.from('daily_answers')
@@ -579,7 +694,8 @@ function HistoryScreen({session}){
 
   return(
     <div style={{minHeight:'100%',background:'linear-gradient(180deg,#004060 0%,#003e52 30%,#002d3d 100%)',paddingBottom:80}}>
-      <div style={{padding:'52px 20px 16px',maxWidth:480,margin:'0 auto'}}>
+      <BetaBanner/>
+      <div style={{padding:'20px 20px 16px',maxWidth:480,margin:'0 auto'}}>
         <h1 style={{fontSize:22,fontWeight:900}}>Meu Histórico</h1>
         <p style={{color:'rgba(255,255,255,.42)',fontSize:13,marginTop:3}}>Suas respostas diárias</p>
       </div>
@@ -595,7 +711,7 @@ function HistoryScreen({session}){
               </div>
               <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
                 <span style={{color:'rgba(255,255,255,.36)',fontSize:10}}>{fmt(h.answered_at)}</span>
-                <span style={{color:h.is_correct?'#8dc63f':'#f15f29',fontWeight:800,fontSize:12}}>{h.is_correct?'Acertou':'Errou'}</span>
+                <span style={{color:h.is_correct?'#8dc63f':'#f15f29',fontWeight:800,fontSize:12}}>{h.is_correct?`+${parseFloat(h.score||0).toFixed(2)} pts`:'Errou'}</span>
               </div>
             </div>
           </div>
@@ -610,15 +726,18 @@ function RankingScreen({session}){
   const [rank,setRank]=useState([]);
   const [loading,setLoading]=useState(true);
   useEffect(()=>{
+    window.track('page_view',{page:'ranking'});
     sb.from('ranking').select('*').limit(50).then(({data})=>{setRank(data||[]);setLoading(false);});
   },[]);
   const myId=session?.user?.id;
   const podium=rank.slice(0,3),rest=rank.slice(3);
   const po=podium.length>=3?[podium[1],podium[0],podium[2]]:podium;
   const pH=[76,100,64],pC=['#C0C0C0','#FFD700','#CD7F32'],pL=['2º','1º','3º'];
+
   return(
     <div style={{minHeight:'100%',background:'linear-gradient(180deg,#004060 0%,#003e52 35%,#002233 100%)',paddingBottom:80}}>
-      <div style={{background:'linear-gradient(180deg,#004d65,transparent)',padding:'52px 20px 0',maxWidth:480,margin:'0 auto'}}>
+      <BetaBanner/>
+      <div style={{background:'linear-gradient(180deg,#004d65,transparent)',padding:'20px 20px 0',maxWidth:480,margin:'0 auto'}}>
         <div style={{color:'#fff',fontSize:22,fontWeight:900,marginBottom:20}}>🏆 Ranking Global</div>
         {loading?<div style={{textAlign:'center',padding:60}}><span className="spinner" style={{margin:'0 auto',display:'block'}}/></div>
         :rank.length===0?<div className="card" style={{textAlign:'center',padding:'40px 20px',marginBottom:12}}><div style={{fontSize:36,marginBottom:12}}>🏆</div><div style={{color:'rgba(255,255,255,.5)',fontSize:14}}>Seja o primeiro a jogar!</div></div>
@@ -632,21 +751,21 @@ function RankingScreen({session}){
                   <div style={{color:'#fff',fontSize:10,fontWeight:700,marginBottom:5,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{p.username}</div>
                   <div style={{height:pH[i],background:`linear-gradient(0deg,${pC[i]}33,${pC[i]}11)`,border:`2px solid ${pC[i]}`,borderRadius:'8px 8px 0 0',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:2}}>
                     <div style={{color:pC[i],fontWeight:900,fontSize:14}}>{pL[i]}</div>
-                    <div style={{color:'#fff',fontSize:10}}>{(p.total_score||0).toLocaleString('pt-BR')}</div>
+                    <div style={{color:'#fff',fontSize:10}}>{parseFloat(p.total_score||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}</div>
                   </div>
                 </div>
               ))}
             </div>
           )}
-          <div style={{padding:'4px 0'}}>
+          <div>
             {rest.map((p,i)=>{
               const isMe=p.id===myId;
               return(
-                <div key={p.id} className="card" style={{marginBottom:8,display:'flex',alignItems:'center',gap:12,border:isMe?'1.5px solid #8dc63f':'1px solid rgba(255,255,255,.08)',background:isMe?'rgba(141,198,63,.1)':'rgba(255,255,255,.05)',animation:`mqFadeUp ${.15+i*.04}s ease`}}>
+                <div key={p.id} className="card" style={{marginBottom:8,display:'flex',alignItems:'center',gap:12,border:isMe?'1.5px solid #8dc63f':'1px solid rgba(255,255,255,.08)',background:isMe?'rgba(141,198,63,.1)':'rgba(255,255,255,.05)'}}>
                   <span style={{color:'rgba(255,255,255,.36)',fontWeight:800,fontSize:11,width:22,textAlign:'center'}}>#{p.position}</span>
                   <span style={{fontSize:20}}>{p.avatar_emoji||'😊'}</span>
                   <span style={{flex:1,color:isMe?'#8dc63f':'#fff',fontWeight:isMe?700:500,fontSize:13}}>{p.username}{isMe?' (Você)':''}</span>
-                  <span style={{color:'#F5FF0F',fontWeight:900,fontSize:14}}>{(p.total_score||0).toLocaleString('pt-BR')}</span>
+                  <span style={{color:'#F5FF0F',fontWeight:900,fontSize:12,fontVariantNumeric:'tabular-nums'}}>{parseFloat(p.total_score||0).toFixed(2)}</span>
                 </div>
               );
             })}
@@ -660,32 +779,40 @@ function RankingScreen({session}){
 /* ══ SCREEN: PROFILE ══ */
 function ProfileScreen({session,profile,onLogout,go}){
   const name=profile?.username||session?.user?.user_metadata?.username||'Jogador';
-  const xpCur=profile?.total_score||0;
+  const xpCur=parseFloat(profile?.total_score||0);
   const level=Math.floor(xpCur/500)+1;
   const xpPct=Math.min(100,Math.round(((xpCur-(level-1)*500)/500)*100));
   return(
     <div style={{minHeight:'100%',background:'linear-gradient(180deg,#004060 0%,#003e52 40%,#002233 100%)',paddingBottom:80}}>
-      <div style={{background:'linear-gradient(180deg,#004d65,transparent)',padding:'52px 20px 24px',textAlign:'center',maxWidth:480,margin:'0 auto'}}>
+      <BetaBanner/>
+      <div style={{background:'linear-gradient(180deg,#004d65,transparent)',padding:'20px 20px 24px',textAlign:'center',maxWidth:480,margin:'0 auto'}}>
         <div style={{width:76,height:76,borderRadius:38,background:'linear-gradient(135deg,#8dc63f,#0090C1)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:34,boxShadow:'0 0 0 4px rgba(141,198,63,.2)',margin:'0 auto 12px',animation:'mqFloat 3s ease-in-out infinite'}}>{profile?.avatar_emoji||'😎'}</div>
         <div style={{color:'#fff',fontSize:19,fontWeight:800}}>{name}</div>
         <div style={{color:'rgba(255,255,255,.38)',fontSize:12,marginTop:2}}>{session?.user?.email}</div>
         <div style={{display:'flex',alignItems:'center',justifyContent:'center',gap:8,marginTop:10}}><span className="pill">⭐ Nível {level}</span></div>
         <div style={{marginTop:14}}>
-          <div style={{display:'flex',justifyContent:'space-between',marginBottom:4}}><span style={{color:'rgba(255,255,255,.38)',fontSize:10}}>XP para Nível {level+1}</span><span style={{color:'#F5FF0F',fontSize:10,fontWeight:700}}>{xpCur}/{level*500}</span></div>
+          <div style={{display:'flex',justifyContent:'space-between',marginBottom:4}}><span style={{color:'rgba(255,255,255,.38)',fontSize:10}}>XP para Nível {level+1}</span><span style={{color:'#F5FF0F',fontSize:10,fontWeight:700}}>{xpCur.toFixed(2)}/{level*500}</span></div>
           <div className="progress-bar"><div className="progress-fill" style={{width:`${xpPct}%`}}/></div>
         </div>
       </div>
       <div style={{padding:'0 20px',maxWidth:480,margin:'0 auto'}}>
         <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,marginBottom:16}}>
-          {[{l:'Total de Pontos',v:xpCur.toLocaleString('pt-BR'),e:'⚡'},{l:'Respondidas',v:profile?.quizzes_played||0,e:'🎯'},{l:'Streak Atual',v:`${profile?.current_streak||0} dias`,e:'🔥'},{l:'Nível',v:level,e:'🏆'}].map((s,i)=>(
+          {[{l:'Total de Pontos',v:xpCur.toFixed(2),e:'⚡'},{l:'Respondidas',v:profile?.quizzes_played||0,e:'🎯'},{l:'Streak Atual',v:`${profile?.current_streak||0} dias`,e:'🔥'},{l:'Nível',v:level,e:'🏆'}].map((s,i)=>(
             <div key={i} className="card" style={{display:'flex',alignItems:'center',gap:10}}>
               <span style={{fontSize:22}}>{s.e}</span>
-              <div><div style={{color:'#fff',fontWeight:800,fontSize:16}}>{s.v}</div><div style={{color:'rgba(255,255,255,.36)',fontSize:10}}>{s.l}</div></div>
+              <div><div style={{color:'#fff',fontWeight:800,fontSize:15,fontVariantNumeric:'tabular-nums'}}>{s.v}</div><div style={{color:'rgba(255,255,255,.36)',fontSize:10}}>{s.l}</div></div>
             </div>
           ))}
         </div>
+        <a href={FEEDBACK_URL} target="_blank" rel="noopener noreferrer"
+          onClick={()=>window.track('feedback_link_click',{location:'profile'})}
+          style={{display:'flex',alignItems:'center',gap:12,padding:'14px 16px',background:'rgba(0,144,193,.1)',border:'1px solid rgba(0,144,193,.25)',borderRadius:14,textDecoration:'none',marginBottom:10}}>
+          <IcMsgSquare s={20} c="#0090C1"/>
+          <div style={{flex:1}}><div style={{color:'#0090C1',fontSize:12,fontWeight:700}}>Deixe seu feedback</div><div style={{color:'rgba(255,255,255,.4)',fontSize:11,marginTop:1}}>Ajude a construir o app</div></div>
+          <IcArrow s={14} c="rgba(255,255,255,.25)"/>
+        </a>
         <button onClick={()=>go('settings')} className="btn-ghost" style={{marginBottom:10}}>⚙️ Configurações</button>
-        <button onClick={onLogout} style={{width:'100%',padding:'16px',background:'rgba(241,95,41,.12)',border:'1.5px solid rgba(241,95,41,.32)',borderRadius:16,color:'#f15f29',fontFamily:'Poppins',fontWeight:800,fontSize:14,cursor:'pointer',transition:'all .2s'}}>🚪 Sair da Conta</button>
+        <button onClick={onLogout} style={{width:'100%',padding:'16px',background:'rgba(241,95,41,.12)',border:'1.5px solid rgba(241,95,41,.32)',borderRadius:16,color:'#f15f29',fontFamily:'Poppins',fontWeight:800,fontSize:14,cursor:'pointer'}}>🚪 Sair da Conta</button>
       </div>
     </div>
   );
@@ -710,13 +837,18 @@ function SettingsScreen({onLogout,go}){
   );
   return(
     <div style={{minHeight:'100%',background:'linear-gradient(180deg,#004060 0%,#003e52 30%,#002233 100%)',paddingBottom:80}}>
-      <div style={{padding:'52px 20px 20px',maxWidth:480,margin:'0 auto'}}>
+      <BetaBanner/>
+      <div style={{padding:'20px 20px 20px',maxWidth:480,margin:'0 auto'}}>
         <button onClick={()=>go('profile')} style={{background:'none',border:'none',color:'rgba(255,255,255,.5)',cursor:'pointer',fontFamily:'Poppins',fontSize:13,fontWeight:600,display:'flex',alignItems:'center',gap:6,marginBottom:12,padding:0}}>← Voltar</button>
         <h1 style={{fontSize:22,fontWeight:900}}>Configurações</h1>
       </div>
       <Sec title="Notificações"><Row icon="🔔" label="Notificações" right={<Toggle val={notif} set={setNotif}/>}/><Row icon="⏰" label="Lembretes diários" right={<Toggle val={false} set={()=>{}}/>} last/></Sec>
       <Sec title="Preferências"><Row icon="🔊" label="Sons do jogo" right={<Toggle val={sound} set={setSound}/>}/><Row icon="🌙" label="Tema escuro" right={<Toggle val={true} set={()=>{}}/>} last/></Sec>
-      <Sec title="Conta"><Row icon="🔒" label="Alterar senha" right={<span style={{color:'rgba(255,255,255,.28)',fontSize:13}}>→</span>} last onClick={()=>{}}/></Sec>
+      <Sec title="Conta"><Row icon="🔒" label="Alterar senha" right={<span style={{color:'rgba(255,255,255,.28)',fontSize:13}}>→</span>} onClick={()=>{}} last/></Sec>
+      <Sec title="Sobre">
+        <Row icon="ℹ️" label="Versão 1.0.0 BETA" right={<span className="pill" style={{fontSize:9}}>BETA</span>}/>
+        <Row icon="⚡" label="Momento QUIZ" right={<span style={{color:'#8dc63f',fontSize:11,fontWeight:700}}>Olá Ciência</span>} last/>
+      </Sec>
       <div style={{padding:'0 20px',maxWidth:480,margin:'0 auto'}}>
         <button onClick={onLogout} style={{width:'100%',padding:'16px',background:'rgba(241,95,41,.12)',border:'1.5px solid rgba(241,95,41,.32)',borderRadius:16,color:'#f15f29',fontFamily:'Poppins',fontWeight:800,fontSize:14,cursor:'pointer'}}>🚪 Sair da Conta</button>
       </div>
@@ -725,106 +857,148 @@ function SettingsScreen({onLogout,go}){
 }
 
 /* ══ SCREEN: ADMIN ══ */
-function AdminScreen({session,go}){
+function AdminScreen({session}){
   const [stats,setStats]=useState(null);
   const [users,setUsers]=useState([]);
+  const [feedbacks,setFeedbacks]=useState(null);
   const [tab,setTab]=useState('stats');
   const [loading,setLoading]=useState(true);
   const [testQ,setTestQ]=useState(null);
   const [testSel,setTestSel]=useState(null);
-  const [newAdminEmail,setNewAdminEmail]=useState('');
-  const [adminMsg,setAdminMsg]=useState('');
 
   useEffect(()=>{
     const load=async()=>{
       try{
-        const [{data:st},{data:us}]=await Promise.all([
+        const [{data:st},{data:us},{data:fb}]=await Promise.all([
           sb.from('admin_stats').select('*').single(),
           sb.from('profiles').select('*').order('total_score',{ascending:false}).limit(50),
+          sb.from('feedback_responses').select('*').order('answered_at',{ascending:false}).limit(100),
         ]);
         setStats(st);setUsers(us||[]);
+        if(fb){
+          const liked=fb.filter(f=>f.liked_quiz===true).length;
+          const total=fb.filter(f=>f.liked_quiz!==null).length;
+          const diff={facil:0,medio:0,dificil:0};
+          fb.forEach(f=>{if(f.difficulty)diff[f.difficulty]=(diff[f.difficulty]||0)+1;});
+          const mot={};
+          fb.forEach(f=>{if(f.motivation)mot[f.motivation]=(mot[f.motivation]||0)+1;});
+          setFeedbacks({total:fb.length,satisfaction:total?Math.round((liked/total)*100):null,difficulty:diff,motivation:mot,raw:fb});
+        }
       }finally{setLoading(false);}
     };
     load();
   },[]);
 
   const loadTestQ=async()=>{
-    const {data}=await sb.from('questions').select('*').limit(300);
+    const {data}=await sb.from('questions').select('*').limit(322);
     if(data){const r=data[Math.floor(Math.random()*data.length)];setTestQ(r);setTestSel(null);}
   };
-
   const toggleAdmin=async(uid,cur)=>{
     await sb.from('profiles').update({is_admin:!cur}).eq('id',uid);
     setUsers(us=>us.map(u=>u.id===uid?{...u,is_admin:!cur}:u));
   };
 
-  const addAdminByEmail=async()=>{
-    if(!newAdminEmail.trim()){setAdminMsg('Informe o email');return;}
-    // Find user by email via profiles username match (limited without service_role)
-    setAdminMsg('Para adicionar admin por email, use o SQL Editor do Supabase:\nUPDATE profiles SET is_admin=true WHERE id=(SELECT id FROM auth.users WHERE email=\''+newAdminEmail.trim()+'\');');
-  };
+  if(loading)return<div style={{height:'100vh',display:'flex',alignItems:'center',justifyContent:'center',background:'#002d3d'}}><span className="spinner"/></div>;
 
   const opts=testQ?[{id:'a',txt:testQ.option_a},{id:'b',txt:testQ.option_b},{id:'c',txt:testQ.option_c},{id:'d',txt:testQ.option_d}].filter(o=>o.txt):[];
 
-  if(loading)return <div style={{height:'100vh',display:'flex',alignItems:'center',justifyContent:'center',background:'#002d3d'}}><span className="spinner"/></div>;
-
   return(
     <div style={{minHeight:'100%',background:'linear-gradient(180deg,#001c27 0%,#002d3d 100%)',paddingBottom:80}}>
-      <div style={{padding:'52px 20px 16px',maxWidth:480,margin:'0 auto'}}>
+      <BetaBanner/>
+      <div style={{padding:'20px 20px 16px',maxWidth:480,margin:'0 auto'}}>
         <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:16}}>
           <div style={{width:36,height:36,borderRadius:10,background:'rgba(241,95,41,.2)',border:'1px solid rgba(241,95,41,.4)',display:'flex',alignItems:'center',justifyContent:'center'}}><IcShield s={18} c="#f15f29"/></div>
           <div><div style={{color:'#f15f29',fontSize:11,fontWeight:800,textTransform:'uppercase',letterSpacing:1}}>Área Restrita</div><h1 style={{fontSize:18,fontWeight:900}}>Painel Admin</h1></div>
         </div>
-
-        {/* Tabs */}
         <div style={{display:'flex',background:'rgba(255,255,255,.07)',borderRadius:12,padding:3,marginBottom:18,gap:3}}>
-          {[{id:'stats',l:'📊 Stats'},{id:'test',l:'🎯 Testar'},{id:'users',l:'👥 Usuários'}].map(t=>(
-            <button key={t.id} onClick={()=>setTab(t.id)} style={{flex:1,padding:'8px 4px',border:'none',borderRadius:9,fontFamily:'Poppins',fontWeight:700,fontSize:11,cursor:'pointer',transition:'all .2s',background:tab===t.id?'rgba(241,95,41,.25)':'transparent',color:tab===t.id?'#f15f29':'rgba(255,255,255,.45)'}}>
+          {[{id:'stats',l:'📊 Stats'},{id:'feedback',l:'💬 Feedback'},{id:'test',l:'🎯 Testar'},{id:'users',l:'👥 Users'}].map(t=>(
+            <button key={t.id} onClick={()=>setTab(t.id)} style={{flex:1,padding:'8px 3px',border:'none',borderRadius:9,fontFamily:'Poppins',fontWeight:700,fontSize:10,cursor:'pointer',background:tab===t.id?'rgba(241,95,41,.25)':'transparent',color:tab===t.id?'#f15f29':'rgba(255,255,255,.45)'}}>
               {t.l}
             </button>
           ))}
         </div>
 
-        {/* STATS TAB */}
+        {/* STATS */}
         {tab==='stats'&&stats&&(
-          <div style={{animation:'mqFadeUp .3s ease'}}>
-            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,marginBottom:12}}>
+          <div>
+            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,marginBottom:10}}>
               {[
-                {l:'Total usuários',v:stats.total_users,e:'👥'},
+                {l:'Usuários',v:stats.total_users,e:'👥'},
                 {l:'Responderam hoje',v:stats.answers_today,e:'📅'},
                 {l:'Acertos hoje',v:stats.correct_today,e:'✅'},
+                {l:'Responderam ontem',v:stats.answers_yesterday,e:'📆'},
                 {l:'Total perguntas',v:stats.total_questions,e:'❓'},
+                {l:'Feedbacks hoje',v:stats.feedbacks_today,e:'💬'},
                 {l:'Respostas totais',v:stats.total_answers_all_time,e:'📊'},
-                {l:'Taxa acerto hoje',v:stats.answers_today>0?Math.round((stats.correct_today/stats.answers_today)*100)+'%':'–',e:'🎯'},
+                {l:'Satisfação geral',v:stats.satisfaction_pct!=null?`${stats.satisfaction_pct}%`:'–',e:'😊'},
               ].map((s,i)=>(
                 <div key={i} className="card" style={{display:'flex',alignItems:'center',gap:10,background:'rgba(241,95,41,.07)',border:'1px solid rgba(241,95,41,.15)'}}>
-                  <span style={{fontSize:20}}>{s.e}</span>
-                  <div><div style={{color:'#fff',fontWeight:800,fontSize:18}}>{s.v}</div><div style={{color:'rgba(255,255,255,.36)',fontSize:10}}>{s.l}</div></div>
+                  <span style={{fontSize:18}}>{s.e}</span>
+                  <div><div style={{color:'#fff',fontWeight:800,fontSize:17}}>{s.v}</div><div style={{color:'rgba(255,255,255,.36)',fontSize:9}}>{s.l}</div></div>
                 </div>
               ))}
             </div>
-            <div className="card" style={{background:'rgba(245,255,15,.06)',border:'1px solid rgba(245,255,15,.15)',textAlign:'center',padding:'16px'}}>
+            <div className="card" style={{background:'rgba(245,255,15,.06)',border:'1px solid rgba(245,255,15,.15)',textAlign:'center',padding:'14px'}}>
               <div style={{color:'#F5FF0F',fontSize:10,fontWeight:800,textTransform:'uppercase',letterSpacing:1,marginBottom:4}}>Hoje em Brasília</div>
               <div style={{color:'#fff',fontSize:15,fontWeight:700}}>{todayBrasilia()}</div>
             </div>
           </div>
         )}
 
-        {/* TEST TAB */}
+        {/* FEEDBACK */}
+        {tab==='feedback'&&(
+          <div>
+            {!feedbacks?<div className="card" style={{textAlign:'center',padding:24}}><div style={{color:'rgba(255,255,255,.4)'}}>Nenhum feedback ainda.</div></div>:(
+              <>
+                <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,marginBottom:12}}>
+                  <div className="card" style={{textAlign:'center',background:'rgba(141,198,63,.08)',border:'1px solid rgba(141,198,63,.2)'}}>
+                    <div style={{fontSize:28,fontWeight:900,color:'#8dc63f'}}>{feedbacks.satisfaction!=null?`${feedbacks.satisfaction}%`:'–'}</div>
+                    <div style={{color:'rgba(255,255,255,.4)',fontSize:10}}>Gostaram do quiz</div>
+                  </div>
+                  <div className="card" style={{textAlign:'center',background:'rgba(0,144,193,.08)',border:'1px solid rgba(0,144,193,.2)'}}>
+                    <div style={{fontSize:28,fontWeight:900,color:'#0090C1'}}>{feedbacks.total}</div>
+                    <div style={{color:'rgba(255,255,255,.4)',fontSize:10}}>Feedbacks totais</div>
+                  </div>
+                </div>
+                <div className="card" style={{marginBottom:10}}>
+                  <div style={{color:'rgba(255,255,255,.4)',fontSize:10,fontWeight:800,textTransform:'uppercase',marginBottom:10}}>Dificuldade percebida</div>
+                  {Object.entries(feedbacks.difficulty).map(([k,v])=>(
+                    <div key={k} style={{marginBottom:7}}>
+                      <div style={{display:'flex',justifyContent:'space-between',marginBottom:3}}>
+                        <span style={{color:'#fff',fontSize:12,textTransform:'capitalize'}}>{k}</span>
+                        <span style={{color:'#F5FF0F',fontSize:12,fontWeight:700}}>{v}</span>
+                      </div>
+                      <div className="progress-bar"><div className="progress-fill" style={{width:feedbacks.total?`${(v/feedbacks.total)*100}%`:'0%'}}/></div>
+                    </div>
+                  ))}
+                </div>
+                <div className="card">
+                  <div style={{color:'rgba(255,255,255,.4)',fontSize:10,fontWeight:800,textTransform:'uppercase',marginBottom:10}}>O que motivou</div>
+                  {Object.entries(feedbacks.motivation).map(([k,v])=>(
+                    <div key={k} style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'6px 0',borderBottom:'1px solid rgba(255,255,255,.05)'}}>
+                      <span style={{color:'#fff',fontSize:12,textTransform:'capitalize'}}>{k}</span>
+                      <span style={{color:'#0090C1',fontSize:13,fontWeight:800}}>{v}×</span>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+        )}
+
+        {/* TEST */}
         {tab==='test'&&(
-          <div style={{animation:'mqFadeUp .3s ease'}}>
+          <div>
             <button className="btn-cta" onClick={loadTestQ} style={{marginBottom:16,background:'linear-gradient(135deg,#f15f29,#c0392b)'}}>
               <IcRefresh s={16} c="#fff"/>Carregar pergunta aleatória
             </button>
             {testQ&&(
               <div>
                 <div className="card" style={{marginBottom:12,background:'rgba(241,95,41,.07)',border:'1px solid rgba(241,95,41,.2)'}}>
-                  <div style={{color:'rgba(255,255,255,.4)',fontSize:10,fontWeight:700,textTransform:'uppercase',marginBottom:8}}>ID: {testQ.id}</div>
                   <p style={{color:'#fff',fontSize:14,fontWeight:700,lineHeight:1.5}}>{testQ.question?.replace(/[\u200c\u200b\u200d\u00ad]/g,'').trim()}</p>
                 </div>
                 {opts.map(o=>{
-                  const isCorrect=o.id===testQ.answer_letter;
-                  const isSel=o.id===testSel;
+                  const isCorrect=o.id===testQ.answer_letter,isSel=o.id===testSel;
                   let cls='opt';
                   if(testSel){if(isCorrect)cls='opt correct';else if(isSel)cls='opt wrong';else cls='opt dim';}
                   return(
@@ -839,7 +1013,7 @@ function AdminScreen({session,go}){
                 {testSel&&(
                   <div style={{background:'linear-gradient(135deg,#001c27,#002a38)',borderRadius:14,padding:'14px',border:'1px solid rgba(245,255,15,.2)',marginTop:4}}>
                     <div style={{color:'#F5FF0F',fontSize:10,fontWeight:800,marginBottom:6}}>💡 Justificativa</div>
-                    {testQ.justification?<p style={{color:'rgba(255,255,255,.8)',fontSize:12.5,lineHeight:1.5}}>{testQ.justification}</p>:<p style={{color:'rgba(255,255,255,.4)',fontSize:12}}>Sem justificativa cadastrada.</p>}
+                    {testQ.justification?<p style={{color:'rgba(255,255,255,.8)',fontSize:12.5,lineHeight:1.5}}>{testQ.justification}</p>:<p style={{color:'rgba(255,255,255,.4)',fontSize:12}}>Sem justificativa.</p>}
                     <YTButton url={testQ.youtube_url} isCorrect={testSel===testQ.answer_letter}/>
                   </div>
                 )}
@@ -848,29 +1022,28 @@ function AdminScreen({session,go}){
           </div>
         )}
 
-        {/* USERS TAB */}
+        {/* USERS */}
         {tab==='users'&&(
-          <div style={{animation:'mqFadeUp .3s ease'}}>
-            <div className="card" style={{marginBottom:14,background:'rgba(0,144,193,.08)',border:'1px solid rgba(0,144,193,.2)'}}>
-              <div style={{color:'#0090C1',fontSize:11,fontWeight:800,textTransform:'uppercase',marginBottom:8}}>Adicionar Admin</div>
-              <div style={{fontSize:11,color:'rgba(255,255,255,.5)',marginBottom:10,lineHeight:1.5}}>Por segurança, use o SQL do Supabase para promover admins:</div>
-              <div style={{background:'rgba(0,0,0,.3)',borderRadius:8,padding:'10px 12px',fontFamily:'monospace',fontSize:11,color:'#8dc63f',lineHeight:1.5,wordBreak:'break-all'}}>
-                UPDATE profiles SET is_admin=true WHERE id=(<br/>
-                &nbsp;&nbsp;SELECT id FROM auth.users<br/>
-                &nbsp;&nbsp;WHERE email='EMAIL_AQUI'<br/>
+          <div>
+            <div className="card" style={{marginBottom:12,background:'rgba(0,144,193,.08)',border:'1px solid rgba(0,144,193,.2)'}}>
+              <div style={{color:'#0090C1',fontSize:11,fontWeight:800,textTransform:'uppercase',marginBottom:8}}>Promover Admin via SQL</div>
+              <div style={{background:'rgba(0,0,0,.3)',borderRadius:8,padding:'10px 12px',fontFamily:'monospace',fontSize:10.5,color:'#8dc63f',lineHeight:1.6,wordBreak:'break-all'}}>
+                UPDATE profiles SET is_admin=true<br/>
+                WHERE id=(<br/>
+                &nbsp;SELECT id FROM auth.users<br/>
+                &nbsp;WHERE email='EMAIL'<br/>
                 );
               </div>
             </div>
-            <div style={{color:'rgba(255,255,255,.4)',fontSize:11,fontWeight:700,textTransform:'uppercase',letterSpacing:1,marginBottom:10}}>Top usuários ({users.length})</div>
             {users.map((u,i)=>(
               <div key={u.id} className="card" style={{marginBottom:8,display:'flex',alignItems:'center',gap:10}}>
                 <span style={{color:'rgba(255,255,255,.3)',fontSize:11,fontWeight:700,width:18}}>#{i+1}</span>
                 <div style={{flex:1,minWidth:0}}>
                   <div style={{color:'#fff',fontWeight:600,fontSize:13,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{u.username||'–'}</div>
-                  <div style={{color:'rgba(255,255,255,.35)',fontSize:10}}>{u.total_score||0} pts · {u.quizzes_played||0} respostas</div>
+                  <div style={{color:'rgba(255,255,255,.35)',fontSize:10}}>{parseFloat(u.total_score||0).toFixed(2)} pts · {u.quizzes_played||0} respostas</div>
                 </div>
                 {u.is_admin&&<span style={{background:'rgba(241,95,41,.2)',border:'1px solid rgba(241,95,41,.4)',borderRadius:8,padding:'2px 8px',color:'#f15f29',fontSize:10,fontWeight:700}}>ADMIN</span>}
-                <button onClick={()=>toggleAdmin(u.id,u.is_admin)} style={{background:'none',border:`1px solid ${u.is_admin?'rgba(241,95,41,.4)':'rgba(255,255,255,.15)'}`,borderRadius:8,padding:'5px 10px',color:u.is_admin?'#f15f29':'rgba(255,255,255,.4)',fontFamily:'Poppins',fontSize:10,fontWeight:700,cursor:'pointer',transition:'all .2s',flexShrink:0}}>
+                <button onClick={()=>toggleAdmin(u.id,u.is_admin)} style={{background:'none',border:`1px solid ${u.is_admin?'rgba(241,95,41,.4)':'rgba(255,255,255,.15)'}`,borderRadius:8,padding:'5px 10px',color:u.is_admin?'#f15f29':'rgba(255,255,255,.4)',fontFamily:'Poppins',fontSize:10,fontWeight:700,cursor:'pointer',flexShrink:0}}>
                   {u.is_admin?'Remover':'+ Admin'}
                 </button>
               </div>
@@ -892,6 +1065,8 @@ function App(){
   const [tweaksVis,setTweaksVis]=useState(false);
   const [dailyResult,setDailyResult]=useState(null);
   const [dailyState,setDailyState]=useState({loading:true,question:null,answered:false,correct:false});
+  const [showFeedback,setShowFeedback]=useState(false);
+  const sessionEnterRef=useRef(null);
 
   const showToast=(msg,type='info')=>{setToast({msg,type});setTimeout(()=>setToast(null),3000);};
 
@@ -909,16 +1084,10 @@ function App(){
   const loadDailyState=async(uid)=>{
     try{
       const today=todayBrasilia();
-      // Get today's scheduled question
-      const {data:sched}=await sb.from('daily_schedule')
-        .select('question_id,questions(*)')
-        .eq('date',today).single();
+      const {data:sched}=await sb.from('daily_schedule').select('question_id,questions(*)').eq('date',today).single();
       if(!sched){setDailyState({loading:false,question:null,answered:false,correct:false});return;}
-      const question=sched.questions;
-      // Check if user already answered today
-      const {data:ans}=await sb.from('daily_answers')
-        .select('is_correct').eq('user_id',uid).eq('date',today).single();
-      setDailyState({loading:false,question,answered:!!ans,correct:ans?.is_correct||false});
+      const {data:ans}=await sb.from('daily_answers').select('is_correct').eq('user_id',uid).eq('date',today).single();
+      setDailyState({loading:false,question:sched.questions,answered:!!ans,correct:ans?.is_correct||false});
     }catch(e){
       console.error(e);
       setDailyState({loading:false,question:null,answered:false,correct:false});
@@ -939,9 +1108,21 @@ function App(){
     return()=>subscription.unsubscribe();
   },[]);
 
+  // Track session time
+  useEffect(()=>{
+    if(!session)return;
+    sessionEnterRef.current=Date.now();
+    window.track('session_start',{});
+    const onLeave=()=>{
+      const dur=Math.round((Date.now()-sessionEnterRef.current)/1000);
+      window.track('session_end',{duration_seconds:dur});
+    };
+    window.addEventListener('beforeunload',onLeave);
+    return()=>window.removeEventListener('beforeunload',onLeave);
+  },[session]);
+
   useEffect(()=>{localStorage.setItem('mq_scr',screen);},[screen]);
 
-  // Tweaks
   useEffect(()=>{
     const h=e=>{
       if(e.data?.type==='__activate_edit_mode')setTweaksVis(true);
@@ -953,7 +1134,12 @@ function App(){
   },[]);
 
   const go=s=>setScreen(s);
-  const handleLogout=async()=>{await sb.auth.signOut();setSession(null);setProfile(null);setScreen('dashboard');showToast('Até logo! 👋');};
+  const handleLogout=async()=>{
+    window.track('logout',{});
+    await sb.auth.signOut();
+    setSession(null);setProfile(null);setScreen('dashboard');
+    showToast('Até logo! 👋');
+  };
 
   if(authLoading)return(
     <div style={{height:'100vh',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',background:'#003e52',gap:16}}>
@@ -969,6 +1155,11 @@ function App(){
     </>
   );
 
+  // Show micro-feedback after result
+  if(showFeedback)return(
+    <MicroFeedback session={session} date={todayBrasilia()} onDone={()=>{setShowFeedback(false);go('dashboard');showToast('Obrigado pelo feedback! 🙏','success');}}/>
+  );
+
   const navScreens=['dashboard','history','ranking','profile','admin'];
   const isAdmin=profile?.is_admin||false;
 
@@ -978,13 +1169,13 @@ function App(){
       <div className="app-main">
         {screen==='dashboard'&&<div className="page"><DashboardScreen go={go} session={session} profile={profile} dailyState={dailyState}/></div>}
         {screen==='quiz'&&<div className="page"><QuizScreen onFinish={r=>{setDailyResult(r);setDailyState(p=>({...p,answered:true,correct:r.correct}));loadProfile(session.user.id);go('result');}} session={session} dailyState={dailyState}/></div>}
-        {screen==='result'&&<div className="page"><ResultScreen result={dailyResult} onHome={go}/></div>}
+        {screen==='result'&&<div className="page"><ResultScreen result={dailyResult} onHome={go} session={session} onFeedback={()=>setShowFeedback(true)}/></div>}
         {screen==='history'&&<div className="page"><HistoryScreen session={session}/></div>}
         {screen==='ranking'&&<div className="page"><RankingScreen session={session}/></div>}
         {screen==='profile'&&<div className="page"><ProfileScreen session={session} profile={profile} onLogout={handleLogout} go={go}/></div>}
         {screen==='settings'&&<div className="page"><SettingsScreen onLogout={handleLogout} go={go}/></div>}
-        {screen==='admin'&&isAdmin&&<div className="page"><AdminScreen session={session} go={go}/></div>}
-        {screen==='admin'&&!isAdmin&&<div className="page" style={{display:'flex',alignItems:'center',justifyContent:'center',minHeight:'100vh',background:'#002d3d',flexDirection:'column',gap:12,padding:24,textAlign:'center'}}><IcShield s={48} c="rgba(255,255,255,.2)"/><p style={{color:'rgba(255,255,255,.4)',fontSize:14}}>Acesso restrito a administradores.</p><button className="btn-ghost" style={{maxWidth:200}} onClick={()=>go('dashboard')}>← Voltar</button></div>}
+        {screen==='admin'&&isAdmin&&<div className="page"><AdminScreen session={session}/></div>}
+        {screen==='admin'&&!isAdmin&&<div className="page" style={{display:'flex',alignItems:'center',justifyContent:'center',minHeight:'100vh',background:'#002d3d',flexDirection:'column',gap:12,padding:24,textAlign:'center'}}><IcShield s={48} c="rgba(255,255,255,.2)"/><p style={{color:'rgba(255,255,255,.4)',fontSize:14}}>Acesso restrito.</p><button className="btn-ghost" style={{maxWidth:200}} onClick={()=>go('dashboard')}>← Voltar</button></div>}
       </div>
       {navScreens.includes(screen)&&<BNav cur={screen} go={go} isAdmin={isAdmin}/>}
 
