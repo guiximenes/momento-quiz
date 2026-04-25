@@ -74,7 +74,26 @@ body{font-family:'Poppins',sans-serif;background:#060e12;color:#fff;min-height:1
 <body>
 <div id="root"></div>
 <script type="text/babel">
-const {useState,useEffect,useRef,useCallback} = React;
+const {useState,useEffect,useRef,useCallback,Component} = React;
+
+/* ── ERROR BOUNDARY — evita tela preta ── */
+class ErrorBoundary extends Component{
+  constructor(p){super(p);this.state={err:null};}
+  static getDerivedStateFromError(e){return{err:e};}
+  componentDidCatch(e,i){console.error('App crash:',e,i);}
+  render(){
+    if(this.state.err)return(
+      <div style={{minHeight:'100vh',background:'#003e52',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',padding:24,textAlign:'center',gap:16}}>
+        <div style={{fontSize:48}}>⚡</div>
+        <div style={{fontSize:20,fontWeight:800,color:'#fff'}}>Momento QUIZ</div>
+        <div style={{color:'rgba(255,255,255,.55)',fontSize:13,maxWidth:320,lineHeight:1.5}}>Ocorreu um erro inesperado. Toque em recarregar para continuar.</div>
+        <button onClick={()=>{this.setState({err:null});window.location.reload();}} style={{background:'#8dc63f',border:'none',borderRadius:14,padding:'14px 28px',color:'#003e52',fontFamily:'Poppins',fontWeight:800,fontSize:14,cursor:'pointer',marginTop:8}}>🔄 Recarregar</button>
+        <details style={{color:'rgba(255,255,255,.25)',fontSize:10,maxWidth:320,wordBreak:'break-all'}}><summary style={{cursor:'pointer'}}>Detalhes do erro</summary>{String(this.state.err)}</details>
+      </div>
+    );
+    return this.props.children;
+  }
+}
 
 const SUPA_URL='https://iiljupzogoywbjqjsbft.supabase.co';
 const SUPA_KEY='sb_publishable_ylEPdfp7VbyyM2RqJdyGLQ_mwgVPdzR';
@@ -1261,40 +1280,73 @@ function App(){
   };
 
   const loadDailyState=async(uid)=>{
+    const safe={loading:false,question:null,answered:false,correct:false,quizCount:1,slot:1,totalSlots:1,answeredSlots:[]};
     try{
       const today=todayBrasilia();
-      // Get daily quiz count setting
-      const {data:setting}=await sb.from('app_settings').select('value').eq('key','daily_quiz_count').single();
-      const quizCount=parseInt(setting?.value||'1',10);
-      // Get all scheduled slots for today (up to quizCount)
-      const {data:slots}=await sb.from('daily_schedule')
-        .select('slot,question_id,questions(*)')
-        .eq('date',today)
-        .lte('slot',quizCount)
-        .order('slot',{ascending:true});
-      if(!slots||slots.length===0){setDailyState({loading:false,question:null,answered:false,correct:false,quizCount,slot:1,totalSlots:0,answeredSlots:[]});return;}
-      // Get which slots user already answered today
-      const {data:answers}=await sb.from('daily_answers')
-        .select('slot,is_correct,score')
-        .eq('user_id',uid).eq('date',today);
-      const answeredSlots=(answers||[]).map(a=>a.slot);
-      // Find next unanswered slot
+
+      // 1. Get quiz count — fail gracefully
+      let quizCount=1;
+      try{
+        const {data:setting}=await sb.from('app_settings').select('value').eq('key','daily_quiz_count').single();
+        quizCount=Math.min(5,Math.max(1,parseInt(setting?.value||'1',10)));
+      }catch(_){quizCount=1;}
+
+      // 2. Try multi-slot query first, fallback to single
+      let slots=[];
+      try{
+        const {data,error}=await sb.from('daily_schedule')
+          .select('slot,question_id,questions(*)')
+          .eq('date',today)
+          .lte('slot',quizCount)
+          .order('slot',{ascending:true});
+        if(!error&&data&&data.length>0) slots=data;
+      }catch(_){}
+
+      // Fallback: old single-slot query (sem coluna slot)
+      if(slots.length===0){
+        try{
+          const {data}=await sb.from('daily_schedule')
+            .select('question_id,questions(*)')
+            .eq('date',today)
+            .limit(1)
+            .single();
+          if(data) slots=[{slot:1,question_id:data.question_id,questions:data.questions}];
+        }catch(_){}
+      }
+
+      if(slots.length===0){setDailyState({...safe,quizCount});return;}
+
+      // 3. Get answered slots
+      let answeredSlots=[];
+      try{
+        const {data:answers}=await sb.from('daily_answers')
+          .select('slot,is_correct,score')
+          .eq('user_id',uid).eq('date',today);
+        answeredSlots=(answers||[]).map(a=>a.slot||1);
+      }catch(_){
+        // Fallback: just check if any answer exists
+        try{
+          const {data:ans}=await sb.from('daily_answers')
+            .select('is_correct').eq('user_id',uid).eq('date',today).limit(1).single();
+          if(ans) answeredSlots=[1];
+        }catch(_){}
+      }
+
       const nextSlot=slots.find(s=>!answeredSlots.includes(s.slot));
       const allDone=!nextSlot;
-      const lastAnswer=answers?.[answers.length-1];
       setDailyState({
         loading:false,
         question:nextSlot?.questions||null,
-        slot:nextSlot?.slot||quizCount,
+        slot:nextSlot?.slot||1,
         answered:allDone,
-        correct:lastAnswer?.is_correct||false,
+        correct:false,
         quizCount,
         totalSlots:slots.length,
         answeredSlots,
       });
     }catch(e){
-      console.error(e);
-      setDailyState({loading:false,question:null,answered:false,correct:false,quizCount:1,slot:1,totalSlots:0,answeredSlots:[]});
+      console.error('loadDailyState error:',e);
+      setDailyState(safe);
     }
   };
 
@@ -1398,7 +1450,9 @@ function App(){
   );
 }
 
-ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <ErrorBoundary><App/></ErrorBoundary>
+);
 </script>
 </body>
 </html>
