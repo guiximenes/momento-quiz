@@ -405,7 +405,7 @@ function LoginScreen({onLogin}){
 
 /* ══ SCREEN: DASHBOARD ══ */
 function DashboardScreen({go,session,profile,dailyState}){
-  const {answered,correct,loading:dLoading}=dailyState;
+  const {answered,correct,loading:dLoading,question,quizCount,totalSlots,answeredSlots,slot}=dailyState;
   const xpCur=profile?.total_score||0;
   const level=Math.floor(xpCur/500)+1;
   const xpNext=level*500,xpPrev=(level-1)*500;
